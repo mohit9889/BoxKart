@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Check, ArrowRight, Star, MessageSquare } from 'lucide-react';
 import { bundles } from '@/data/bundles';
 import { useCart } from '@/lib/cart';
 import Link from 'next/link';
+import Icon from '@/components/Icon';
 
 /**
  * Packaging bundles section with 3 bundle cards.
@@ -44,7 +44,7 @@ export default function PackagingBundles() {
               >
                 {bundle.popular && (
                   <div className="bg-accent text-white text-center py-1.5 text-xs font-bold flex items-center justify-center gap-1">
-                    <Star size={12} fill="white" />
+                    <Icon name="Star" size={12} fill="white" />
                     Most Popular
                   </div>
                 )}
@@ -101,7 +101,8 @@ export default function PackagingBundles() {
                         key={item.item}
                         className="flex items-start gap-2 text-sm text-text-primary"
                       >
-                        <Check
+                        <Icon
+                          name="Check"
                           size={16}
                           className="text-accent shrink-0 mt-0.5"
                         />
@@ -126,7 +127,7 @@ export default function PackagingBundles() {
                       href="#custom-packaging"
                       className="btn-outline w-full text-center flex items-center justify-center gap-2"
                     >
-                      <MessageSquare size={16} />
+                      <Icon name="MessageSquare" size={16} />
                       {bundle.cta}
                     </Link>
                   )}

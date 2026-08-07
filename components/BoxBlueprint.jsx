@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Scissors, FoldVertical, Droplets } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Flat 2D die-cut blueprint showing cut lines, fold lines, and glue tabs
@@ -81,21 +81,25 @@ export default function BoxBlueprint({ product }) {
             <div className="flex items-center gap-2">
               <div className="w-6 h-0 border-t-2 border-[#2563eb]" />
               <span className="text-xs text-text-secondary font-medium flex items-center gap-1">
-                <Scissors size={12} className="text-[#2563eb]" />
+                <Icon name="Scissors" size={12} className="text-[#2563eb]" />
                 Cut Line
               </span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-6 h-0 border-t-2 border-dashed border-[#dc2626]" />
               <span className="text-xs text-text-secondary font-medium flex items-center gap-1">
-                <FoldVertical size={12} className="text-[#dc2626]" />
+                <Icon
+                  name="FoldVertical"
+                  size={12}
+                  className="text-[#dc2626]"
+                />
                 Fold Line
               </span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-6 h-3 bg-[#2563eb]/8 border border-[#2563eb]/30 rounded-sm" />
               <span className="text-xs text-text-secondary font-medium flex items-center gap-1">
-                <Droplets size={12} className="text-[#2563eb]" />
+                <Icon name="Droplets" size={12} className="text-[#2563eb]" />
                 Glue Tab
               </span>
             </div>

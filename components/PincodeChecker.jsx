@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { MapPin, Truck, AlertCircle } from 'lucide-react';
 import { calculateShipping } from '@/lib/delivery';
+import Icon from '@/components/Icon';
 
 /**
  * Pincode checker component — shows estimated delivery time
@@ -24,7 +24,7 @@ export default function PincodeChecker({ product, selectedQty = 100 }) {
   return (
     <div className="card-bk p-4 mt-6">
       <div className="flex items-center gap-2 mb-3">
-        <MapPin size={18} className="text-charcoal" />
+        <Icon name="MapPin" size={18} className="text-charcoal" />
         <h3 className="font-semibold text-charcoal text-sm">
           Delivery Details
         </h3>
@@ -51,14 +51,14 @@ export default function PincodeChecker({ product, selectedQty = 100 }) {
         <div className="mt-3 pt-3 border-t border-border">
           {result.error ? (
             <div className="flex gap-2 text-red-600 text-sm">
-              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              <Icon name="AlertCircle" size={16} className="shrink-0 mt-0.5" />
               <span>{result.error}</span>
             </div>
           ) : (
             <div className="space-y-2">
               <div className="flex justify-between items-start text-sm">
                 <span className="text-text-secondary flex items-center gap-1.5">
-                  <Truck size={14} /> Estimated Delivery
+                  <Icon name="Truck" size={14} /> Estimated Delivery
                 </span>
                 <span className="font-medium text-charcoal">
                   {result.estimatedDays}

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { X, Package, ChevronRight } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Slide-in mobile navigation menu with AnimatePresence.
@@ -33,7 +33,7 @@ export default function MobileMenu({ open, onClose, links }) {
             <div className="flex items-center justify-between p-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 bg-charcoal rounded-lg flex items-center justify-center">
-                  <Package size={14} className="text-white" />
+                  <Icon name="Package" size={14} className="text-white" />
                 </div>
                 <span className="font-bold text-lg text-charcoal">
                   Box<span className="text-kraft">Kart</span>
@@ -44,7 +44,7 @@ export default function MobileMenu({ open, onClose, links }) {
                 className="p-2 rounded-full hover:bg-warm-gray transition-colors"
                 aria-label="Close menu"
               >
-                <X size={20} />
+                <Icon name="X" size={20} />
               </button>
             </div>
 
@@ -66,7 +66,11 @@ export default function MobileMenu({ open, onClose, links }) {
                     className="flex items-center justify-between px-6 py-4 text-base font-medium text-text-primary hover:bg-warm-gray transition-colors"
                   >
                     {link.label}
-                    <ChevronRight size={16} className="text-text-tertiary" />
+                    <Icon
+                      name="ChevronRight"
+                      size={16}
+                      className="text-text-tertiary"
+                    />
                   </Link>
                 </motion.div>
               ))}

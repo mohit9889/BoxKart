@@ -3,10 +3,10 @@
 import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { products } from '@/data/products';
 import { categories } from '@/data/categories';
 import ProductCard from '@/components/ProductCard';
+import Icon from '@/components/Icon';
 
 const PLY_OPTIONS = ['3-Ply', '5-Ply', 'N/A'];
 const SORT_OPTIONS = [
@@ -221,7 +221,7 @@ function ProductsPageContent() {
               onClick={() => setFiltersOpen(true)}
               className="lg:hidden btn-outline text-sm flex items-center gap-2"
             >
-              <SlidersHorizontal size={16} />
+              <Icon name="SlidersHorizontal" size={16} />
               Filters
               {activeFilterCount > 0 && (
                 <span className="bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
@@ -243,7 +243,8 @@ function ProductsPageContent() {
                   </option>
                 ))}
               </select>
-              <ChevronDown
+              <Icon
+                name="ChevronDown"
                 size={14}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
               />
@@ -298,7 +299,7 @@ function ProductsPageContent() {
                     onClick={() => setFiltersOpen(false)}
                     className="p-2 rounded-full hover:bg-warm-gray"
                   >
-                    <X size={20} />
+                    <Icon name="X" size={20} />
                   </button>
                 </div>
 

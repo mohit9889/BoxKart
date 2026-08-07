@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Search, MousePointerClick, CreditCard, Truck } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const STEPS = [
   {
@@ -9,25 +9,25 @@ const STEPS = [
     title: 'Choose your packaging',
     description:
       'Browse our catalogue or use the Box Finder to get recommendations.',
-    icon: Search,
+    icon: 'Search',
   },
   {
     num: '02',
     title: 'Select quantity',
     description: 'Pick the right quantity tier to get the best bulk pricing.',
-    icon: MousePointerClick,
+    icon: 'MousePointerClick',
   },
   {
     num: '03',
     title: 'Place your order',
     description: 'Quick checkout with delivery to your warehouse or store.',
-    icon: CreditCard,
+    icon: 'CreditCard',
   },
   {
     num: '04',
     title: 'Receive your packaging',
     description: 'Fast delivery across India. Reorder anytime with one click.',
-    icon: Truck,
+    icon: 'Truck',
   },
 ];
 
@@ -68,7 +68,7 @@ export default function HowItWorks() {
               className="text-center relative"
             >
               <div className="w-20 h-20 rounded-2xl bg-kraft-muted flex items-center justify-center mx-auto mb-4 relative z-10">
-                <step.icon size={28} className="text-kraft" />
+                <Icon name={step.icon} size={28} className="text-kraft" />
               </div>
               <span className="text-xs font-bold text-kraft uppercase tracking-wider">
                 Step {step.num}
@@ -96,7 +96,7 @@ export default function HowItWorks() {
             >
               <div className="flex flex-col items-center">
                 <div className="w-12 h-12 rounded-xl bg-kraft-muted flex items-center justify-center shrink-0">
-                  <step.icon size={20} className="text-kraft" />
+                  <Icon name={step.icon} size={20} className="text-kraft" />
                 </div>
                 {i < STEPS.length - 1 && (
                   <div className="w-0.5 flex-1 bg-border mt-2" />

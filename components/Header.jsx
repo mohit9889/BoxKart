@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { Search, ShoppingCart, User, Menu, X, Package } from 'lucide-react';
 import { useCart } from '@/lib/cart';
 import SearchBar from './SearchBar';
 import MobileMenu from './MobileMenu';
 import CartDrawer from './CartDrawer';
+import Icon from '@/components/Icon';
 
 const NAV_LINKS = [
   { label: 'Boxes', href: '/products?category=corrugated-boxes' },
@@ -48,7 +48,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-charcoal rounded-lg flex items-center justify-center">
-              <Package size={18} className="text-white" />
+              <Icon name="Package" size={18} className="text-white" />
             </div>
             <span className="text-xl font-bold tracking-tight text-charcoal">
               Box<span className="text-kraft">Kart</span>
@@ -80,7 +80,7 @@ export default function Header() {
               className="p-2.5 rounded-full hover:bg-warm-gray transition-colors"
               aria-label="Search products"
             >
-              <Search size={20} className="text-text-secondary" />
+              <Icon name="Search" size={20} className="text-text-secondary" />
             </button>
 
             {/* Account */}
@@ -89,7 +89,7 @@ export default function Header() {
               className="hidden sm:flex p-2.5 rounded-full hover:bg-warm-gray transition-colors"
               aria-label="My account"
             >
-              <User size={20} className="text-text-secondary" />
+              <Icon name="User" size={20} className="text-text-secondary" />
             </Link>
 
             {/* Cart */}
@@ -98,7 +98,11 @@ export default function Header() {
               className="relative p-2.5 rounded-full hover:bg-warm-gray transition-colors"
               aria-label={`Cart (${totalItems} items)`}
             >
-              <ShoppingCart size={20} className="text-text-secondary" />
+              <Icon
+                name="ShoppingCart"
+                size={20}
+                className="text-text-secondary"
+              />
               <AnimatePresence>
                 {totalItems > 0 && (
                   <motion.span
@@ -128,7 +132,7 @@ export default function Header() {
               className="lg:hidden p-2.5 rounded-full hover:bg-warm-gray transition-colors ml-1"
               aria-label="Open menu"
             >
-              <Menu size={22} className="text-charcoal" />
+              <Icon name="Menu" size={22} className="text-charcoal" />
             </button>
           </div>
         </div>

@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { ShoppingCart, Check, Package } from 'lucide-react';
 import { useCart } from '@/lib/cart';
+import Icon from '@/components/Icon';
 
 /**
  * Reusable product card with quantity-based pricing,
@@ -139,7 +139,7 @@ export default function ProductCard({ product, index = 0 }) {
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="flex items-center gap-1.5"
               >
-                <Check size={16} />
+                <Icon name="Check" size={16} />
                 Added ✓
               </motion.span>
             ) : (
@@ -150,7 +150,7 @@ export default function ProductCard({ product, index = 0 }) {
                 exit={{ opacity: 0 }}
                 className="flex items-center gap-1.5"
               >
-                <ShoppingCart size={16} />
+                <Icon name="ShoppingCart" size={16} />
                 Add to Cart
               </motion.span>
             )}

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Package, Mail, Phone, MapPin } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const PRODUCT_LINKS = [
   { label: 'Corrugated Boxes', href: '/products?category=corrugated-boxes' },
@@ -39,7 +39,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                <Package size={18} className="text-kraft-light" />
+                <Icon name="Package" size={18} className="text-kraft-light" />
               </div>
               <span className="text-xl font-bold">
                 Box<span className="text-kraft-light">Kart</span>
@@ -54,18 +54,18 @@ export default function Footer() {
                 href="mailto:hello@boxkart.in"
                 className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
               >
-                <Mail size={14} />
+                <Icon name="Mail" size={14} />
                 hello@boxkart.in
               </a>
               <a
                 href="tel:+919876543210"
                 className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
               >
-                <Phone size={14} />
+                <Icon name="Phone" size={14} />
                 +91 98765 43210
               </a>
               <p className="flex items-start gap-2 text-sm text-white/60">
-                <MapPin size={14} className="shrink-0 mt-0.5" />
+                <Icon name="MapPin" size={14} className="shrink-0 mt-0.5" />
                 Mumbai, Maharashtra, India
               </p>
             </div>

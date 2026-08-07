@@ -2,8 +2,8 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { categories } from '@/data/categories';
+import Icon from '@/components/Icon';
 
 /**
  * Category browsing section with large visual cards.
@@ -44,7 +44,11 @@ export default function CategorySection() {
                     className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                     style={{ backgroundColor: `${cat.color}15` }}
                   >
-                    <cat.icon size={24} style={{ color: cat.color }} />
+                    <Icon
+                      name={cat.icon}
+                      size={24}
+                      style={{ color: cat.color }}
+                    />
                   </div>
                   <h3 className="font-semibold text-charcoal mb-1.5 group-hover:text-kraft transition-colors">
                     {cat.name}
@@ -54,7 +58,8 @@ export default function CategorySection() {
                   </p>
                   <span className="inline-flex items-center gap-1 text-sm font-medium text-kraft group-hover:gap-2 transition-all">
                     Browse
-                    <ArrowRight
+                    <Icon
+                      name="ArrowRight"
                       size={14}
                       className="transition-transform group-hover:translate-x-0.5"
                     />

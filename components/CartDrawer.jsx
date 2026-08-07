@@ -1,9 +1,9 @@
 'use client';
 
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '@/lib/cart';
 import Link from 'next/link';
+import Icon from '@/components/Icon';
 
 /**
  * Slide-in cart drawer with item list, pricing, and checkout CTA.
@@ -44,7 +44,7 @@ export default function CartDrawer({ open, onClose }) {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border">
               <div className="flex items-center gap-2">
-                <ShoppingBag size={20} className="text-charcoal" />
+                <Icon name="ShoppingBag" size={20} className="text-charcoal" />
                 <h2 className="font-bold text-lg">
                   Cart{' '}
                   {totalItems > 0 && (
@@ -59,7 +59,7 @@ export default function CartDrawer({ open, onClose }) {
                 className="p-2 rounded-full hover:bg-warm-gray transition-colors"
                 aria-label="Close cart"
               >
-                <X size={20} />
+                <Icon name="X" size={20} />
               </button>
             </div>
 
@@ -67,7 +67,11 @@ export default function CartDrawer({ open, onClose }) {
             <div className="flex-1 overflow-y-auto">
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                  <ShoppingBag size={48} className="text-border mb-4" />
+                  <Icon
+                    name="ShoppingBag"
+                    size={48}
+                    className="text-border mb-4"
+                  />
                   <p className="font-medium text-charcoal mb-1">
                     Your cart is empty
                   </p>
@@ -115,7 +119,7 @@ export default function CartDrawer({ open, onClose }) {
                             className="p-1.5 rounded-lg hover:bg-red-50 text-text-tertiary hover:text-danger transition-colors"
                             aria-label={`Remove ${item.product.name}`}
                           >
-                            <Trash2 size={14} />
+                            <Icon name="Trash2" size={14} />
                           </button>
                         </div>
 
@@ -138,7 +142,7 @@ export default function CartDrawer({ open, onClose }) {
                                 className="p-1.5 hover:bg-border rounded-l-lg transition-colors"
                                 aria-label="Decrease count"
                               >
-                                <Minus size={12} />
+                                <Icon name="Minus" size={12} />
                               </button>
                               <span className="text-sm font-medium px-2 min-w-[1.5rem] text-center">
                                 {item.count}
@@ -150,7 +154,7 @@ export default function CartDrawer({ open, onClose }) {
                                 className="p-1.5 hover:bg-border rounded-r-lg transition-colors"
                                 aria-label="Increase count"
                               >
-                                <Plus size={12} />
+                                <Icon name="Plus" size={12} />
                               </button>
                             </div>
                           </div>
@@ -187,7 +191,7 @@ export default function CartDrawer({ open, onClose }) {
                   className="btn-accent w-full text-center flex items-center justify-center gap-2"
                 >
                   Continue to Checkout
-                  <ArrowRight size={16} />
+                  <Icon name="ArrowRight" size={16} />
                 </Link>
                 <button
                   onClick={clearCart}

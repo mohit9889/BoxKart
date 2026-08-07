@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import ProductCard from './ProductCard';
 import { getPopularProducts } from '@/data/products';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Popular products grid section on the homepage.
@@ -34,7 +34,7 @@ export default function PopularBoxes() {
             className="inline-flex items-center gap-1.5 text-sm font-medium text-kraft hover:text-kraft-light transition-colors whitespace-nowrap"
           >
             View All Products
-            <ArrowRight size={16} />
+            <Icon name="ArrowRight" size={16} />
           </Link>
         </motion.div>
 

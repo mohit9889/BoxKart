@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Dismissible announcement bar with promotional message.
@@ -35,7 +35,7 @@ export default function AnnouncementBar() {
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10 transition-colors"
               aria-label="Dismiss announcement"
             >
-              <X size={14} />
+              <Icon name="X" size={14} />
             </button>
           </div>
         </motion.div>

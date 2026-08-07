@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, X, ArrowRight } from 'lucide-react';
 import { getSearchSuggestions, searchProducts } from '@/lib/search';
 import Link from 'next/link';
+import Icon from '@/components/Icon';
 
 /**
  * Full-screen search overlay with intelligent suggestions.
@@ -57,7 +57,11 @@ export default function SearchBar({ open, onClose }) {
             <div className="container-bk py-4">
               {/* Input */}
               <div className="flex items-center gap-3">
-                <Search size={20} className="text-text-tertiary shrink-0" />
+                <Icon
+                  name="Search"
+                  size={20}
+                  className="text-text-tertiary shrink-0"
+                />
                 <input
                   ref={inputRef}
                   type="text"
@@ -72,7 +76,7 @@ export default function SearchBar({ open, onClose }) {
                   className="p-2 rounded-full hover:bg-warm-gray transition-colors"
                   aria-label="Close search"
                 >
-                  <X size={20} />
+                  <Icon name="X" size={20} />
                 </button>
               </div>
 
@@ -132,7 +136,8 @@ export default function SearchBar({ open, onClose }) {
                               {product.pricingTiers[0].price}/pc
                             </p>
                           </div>
-                          <ArrowRight
+                          <Icon
+                            name="ArrowRight"
                             size={16}
                             className="text-text-tertiary group-hover:text-charcoal transition-colors"
                           />

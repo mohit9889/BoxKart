@@ -3,27 +3,15 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import {
-  LayoutDashboard,
-  Package,
-  Heart,
-  FileText,
-  MapPin,
-  Building2,
-  RefreshCw,
-  ChevronRight,
-  Clock,
-  CheckCircle,
-  Truck,
-} from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const TABS = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'orders', label: 'Orders', icon: Package },
-  { id: 'saved', label: 'Saved Products', icon: Heart },
-  { id: 'quotes', label: 'Quotes', icon: FileText },
-  { id: 'addresses', label: 'Addresses', icon: MapPin },
-  { id: 'profile', label: 'Business Profile', icon: Building2 },
+  { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
+  { id: 'orders', label: 'Orders', icon: 'Package' },
+  { id: 'saved', label: 'Saved Products', icon: 'Heart' },
+  { id: 'quotes', label: 'Quotes', icon: 'FileText' },
+  { id: 'addresses', label: 'Addresses', icon: 'MapPin' },
+  { id: 'profile', label: 'Business Profile', icon: 'Building2' },
 ];
 
 const MOCK_ORDERS = [
@@ -34,7 +22,7 @@ const MOCK_ORDERS = [
     total: '₹9,200',
     status: 'Delivered',
     statusColor: 'text-accent',
-    statusIcon: CheckCircle,
+    statusIcon: 'CheckCircle',
   },
   {
     id: 'PK1019',
@@ -43,7 +31,7 @@ const MOCK_ORDERS = [
     total: '₹2,000',
     status: 'Delivered',
     statusColor: 'text-accent',
-    statusIcon: CheckCircle,
+    statusIcon: 'CheckCircle',
   },
   {
     id: 'PK1032',
@@ -52,7 +40,7 @@ const MOCK_ORDERS = [
     total: '₹5,600',
     status: 'In Transit',
     statusColor: 'text-info',
-    statusIcon: Truck,
+    statusIcon: 'Truck',
   },
 ];
 
@@ -89,7 +77,7 @@ export default function AccountPage() {
                     : 'text-text-secondary hover:bg-warm-gray'
                 }`}
               >
-                <tab.icon size={18} />
+                <Icon name={tab.icon} size={18} />
                 {tab.label}
               </button>
             ))}
@@ -145,7 +133,11 @@ export default function AccountPage() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-kraft-muted rounded-xl flex items-center justify-center">
-                          <Package size={18} className="text-kraft" />
+                          <Icon
+                            name="Package"
+                            size={18}
+                            className="text-kraft"
+                          />
                         </div>
                         <div>
                           <p className="text-sm font-medium text-charcoal">
@@ -174,14 +166,14 @@ export default function AccountPage() {
               {/* Recommended Reorder */}
               <div className="card-bk p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Clock size={18} className="text-kraft" />
+                  <Icon name="Clock" size={18} className="text-kraft" />
                   <h2 className="font-bold text-charcoal">
                     Recommended Reorders
                   </h2>
                 </div>
                 <div className="bg-warm-gray rounded-xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Package size={20} className="text-kraft" />
+                    <Icon name="Package" size={20} className="text-kraft" />
                     <div>
                       <p className="text-sm font-medium text-charcoal">
                         Medium Shipping Box (8×6×4&quot;)
@@ -195,7 +187,7 @@ export default function AccountPage() {
                     whileTap={{ scale: 0.95 }}
                     className="btn-accent text-sm flex items-center gap-1.5"
                   >
-                    <RefreshCw size={14} />
+                    <Icon name="RefreshCw" size={14} />
                     Reorder
                   </motion.button>
                 </div>
@@ -219,7 +211,8 @@ export default function AccountPage() {
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-kraft-muted rounded-xl flex items-center justify-center">
-                          <order.statusIcon
+                          <Icon
+                            name={order.statusIcon}
                             size={18}
                             className={order.statusColor}
                           />
@@ -251,7 +244,11 @@ export default function AccountPage() {
                           whileTap={{ scale: 0.95 }}
                           className="btn-outline text-xs px-3 py-1.5"
                         >
-                          <RefreshCw size={12} className="mr-1 inline" />
+                          <Icon
+                            name="RefreshCw"
+                            size={12}
+                            className="mr-1 inline"
+                          />
                           Reorder
                         </motion.button>
                       </div>
@@ -301,13 +298,21 @@ export default function AccountPage() {
             >
               <div className="w-16 h-16 bg-warm-gray rounded-2xl flex items-center justify-center mx-auto mb-4">
                 {activeTab === 'saved' && (
-                  <Heart size={28} className="text-text-tertiary" />
+                  <Icon name="Heart" size={28} className="text-text-tertiary" />
                 )}
                 {activeTab === 'addresses' && (
-                  <MapPin size={28} className="text-text-tertiary" />
+                  <Icon
+                    name="MapPin"
+                    size={28}
+                    className="text-text-tertiary"
+                  />
                 )}
                 {activeTab === 'profile' && (
-                  <Building2 size={28} className="text-text-tertiary" />
+                  <Icon
+                    name="Building2"
+                    size={28}
+                    className="text-text-tertiary"
+                  />
                 )}
               </div>
               <p className="font-medium text-charcoal mb-1">Coming Soon</p>

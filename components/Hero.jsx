@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { ArrowRight, Package, Box } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Hero section with headline, CTAs, and CSS-rendered box composition
@@ -25,7 +25,7 @@ export default function Hero() {
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 px-3 py-1.5 bg-kraft-muted rounded-full text-sm font-medium text-kraft mb-6"
             >
-              <Package size={14} />
+              <Icon name="Package" size={14} />
               Launching for e-commerce sellers in North India
             </motion.div>
 
@@ -50,7 +50,7 @@ export default function Hero() {
                   className="btn-accent text-base px-6 py-3.5"
                 >
                   Find My Box
-                  <ArrowRight size={18} />
+                  <Icon name="ArrowRight" size={18} />
                 </Link>
               </motion.div>
               <motion.div

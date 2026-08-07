@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const FAQS = [
   {
@@ -83,7 +83,11 @@ export default function FAQ() {
                   transition={{ duration: 0.2 }}
                   className="shrink-0"
                 >
-                  <ChevronDown size={18} className="text-text-tertiary" />
+                  <Icon
+                    name="ChevronDown"
+                    size={18}
+                    className="text-text-tertiary"
+                  />
                 </motion.div>
               </button>
 

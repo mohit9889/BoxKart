@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { TrendingDown, Package } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const EXAMPLE = {
   name: '10 × 8 × 4" Corrugated Box',
@@ -35,7 +35,7 @@ export default function BulkPricing() {
             viewport={{ once: true }}
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent-light rounded-full text-sm font-medium text-accent-dark mb-4">
-              <TrendingDown size={14} />
+              <Icon name="TrendingDown" size={14} />
               Bulk Savings
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-charcoal mb-3">
@@ -106,7 +106,7 @@ export default function BulkPricing() {
             <div className="card-bk p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-kraft-muted rounded-xl flex items-center justify-center">
-                  <Package size={24} className="text-kraft" />
+                  <Icon name="Package" size={24} className="text-kraft" />
                 </div>
                 <div>
                   <p className="font-bold text-charcoal">{EXAMPLE.name}</p>

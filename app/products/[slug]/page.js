@@ -3,27 +3,12 @@
 import { useState, use } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import {
-  ShoppingCart,
-  Check,
-  Package,
-  Ruler,
-  Layers,
-  Weight,
-  Truck,
-  Tag,
-  ChevronRight,
-  FileText,
-  Info,
-  AlertTriangle,
-  TrendingDown,
-  X,
-} from 'lucide-react';
 import { products, getPriceForQuantity } from '@/data/products';
 import { useCart } from '@/lib/cart';
 import { getUpsellPrompt } from '@/lib/pricing';
 import BoxBlueprint from '@/components/BoxBlueprint';
 import PincodeChecker from '@/components/PincodeChecker';
+import Icon from '@/components/Icon';
 
 /**
  * Product detail page — shows full product info, pricing tiers,
@@ -62,12 +47,12 @@ export default function ProductDetailPage({ params }) {
   };
 
   const specs = [
-    { icon: Ruler, label: 'Dimensions', value: product.dimensions },
-    { icon: Layers, label: 'Ply', value: product.ply },
-    { icon: Package, label: 'Material', value: product.material },
-    { icon: Weight, label: 'Weight Capacity', value: product.weightCapacity },
-    { icon: Truck, label: 'Delivery', value: product.deliveryEstimate },
-    { icon: Tag, label: 'MOQ', value: `${product.moq} pieces` },
+    { icon: 'Ruler', label: 'Dimensions', value: product.dimensions },
+    { icon: 'Layers', label: 'Ply', value: product.ply },
+    { icon: 'Package', label: 'Material', value: product.material },
+    { icon: 'Weight', label: 'Weight Capacity', value: product.weightCapacity },
+    { icon: 'Truck', label: 'Delivery', value: product.deliveryEstimate },
+    { icon: 'Tag', label: 'MOQ', value: `${product.moq} pieces` },
   ];
 
   return (
@@ -78,14 +63,14 @@ export default function ProductDetailPage({ params }) {
           <Link href="/" className="hover:text-charcoal transition-colors">
             Home
           </Link>
-          <ChevronRight size={14} />
+          <Icon name="ChevronRight" size={14} />
           <Link
             href="/products"
             className="hover:text-charcoal transition-colors"
           >
             Products
           </Link>
-          <ChevronRight size={14} />
+          <Icon name="ChevronRight" size={14} />
           <span className="text-charcoal font-medium">{product.name}</span>
         </nav>
 
@@ -189,7 +174,11 @@ export default function ProductDetailPage({ params }) {
                 if (savings <= 0) return null;
                 return (
                   <div className="bg-accent-light/30 border border-accent/20 rounded-xl p-3 mb-3 flex items-center gap-2 text-sm">
-                    <TrendingDown size={16} className="text-accent shrink-0" />
+                    <Icon
+                      name="TrendingDown"
+                      size={16}
+                      className="text-accent shrink-0"
+                    />
                     <span className="text-accent-dark font-medium">
                       Save ₹{savings.toLocaleString('en-IN')} vs ordering{' '}
                       {product.pricingTiers[0].qty.toLocaleString('en-IN')} at a
@@ -254,7 +243,7 @@ export default function ProductDetailPage({ params }) {
                       exit={{ opacity: 0 }}
                       className="flex items-center gap-1.5"
                     >
-                      <Check size={18} />
+                      <Icon name="Check" size={18} />
                       Added ✓
                     </motion.span>
                   ) : (
@@ -265,7 +254,7 @@ export default function ProductDetailPage({ params }) {
                       exit={{ opacity: 0 }}
                       className="flex items-center gap-1.5"
                     >
-                      <ShoppingCart size={18} />
+                      <Icon name="ShoppingCart" size={18} />
                       Add to Cart
                     </motion.span>
                   )}
@@ -275,7 +264,7 @@ export default function ProductDetailPage({ params }) {
                 onClick={() => setShowBulkQuote(true)}
                 className="btn-outline flex items-center gap-2"
               >
-                <FileText size={16} />
+                <Icon name="FileText" size={16} />
                 Bulk Quote
               </button>
             </div>
@@ -291,7 +280,8 @@ export default function ProductDetailPage({ params }) {
               <div className="grid grid-cols-2 gap-3">
                 {specs.map((spec) => (
                   <div key={spec.label} className="flex items-start gap-2.5">
-                    <spec.icon
+                    <Icon
+                      name={spec.icon}
                       size={16}
                       className="text-kraft shrink-0 mt-0.5"
                     />
@@ -310,7 +300,7 @@ export default function ProductDetailPage({ params }) {
             {(product.ply === '3-Ply' || product.ply === '5-Ply') && (
               <div className="border-t border-border pt-6 mt-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Info size={16} className="text-info" />
+                  <Icon name="Info" size={16} className="text-info" />
                   <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider">
                     What is {product.ply}?
                   </h3>
@@ -327,7 +317,11 @@ export default function ProductDetailPage({ params }) {
             {product.notRecommendedFor?.length > 0 && (
               <div className="border-t border-border pt-6 mt-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <AlertTriangle size={16} className="text-warning" />
+                  <Icon
+                    name="AlertTriangle"
+                    size={16}
+                    className="text-warning"
+                  />
                   <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider">
                     Not Recommended For
                   </h3>
@@ -387,7 +381,7 @@ export default function ProductDetailPage({ params }) {
                   onClick={() => setShowBulkQuote(false)}
                   className="p-2 rounded-full hover:bg-warm-gray"
                 >
-                  <X size={18} />
+                  <Icon name="X" size={18} />
                 </button>
               </div>
               <p className="text-sm text-text-secondary mb-4">
@@ -471,12 +465,12 @@ export default function ProductDetailPage({ params }) {
           >
             {added ? (
               <>
-                <Check size={16} />
+                <Icon name="Check" size={16} />
                 Added
               </>
             ) : (
               <>
-                <ShoppingCart size={16} />
+                <Icon name="ShoppingCart" size={16} />
                 Add to Cart
               </>
             )}

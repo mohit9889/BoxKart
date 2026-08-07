@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { Users, ArrowRight, Package, Sparkles } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Early seller community CTA — replaces fake testimonials
@@ -19,7 +19,7 @@ export default function Testimonials() {
           className="max-w-2xl mx-auto text-center"
         >
           <div className="w-16 h-16 bg-kraft-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Users size={28} className="text-kraft" />
+            <Icon name="Users" size={28} className="text-kraft" />
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold text-charcoal mb-4">
@@ -34,23 +34,27 @@ export default function Testimonials() {
           <div className="grid sm:grid-cols-3 gap-4 mb-8">
             {[
               {
-                icon: Package,
+                icon: 'Package',
                 title: 'Low MOQ',
                 desc: 'Start with just 100 boxes',
               },
               {
-                icon: Sparkles,
+                icon: 'Sparkles',
                 title: 'Transparent Pricing',
                 desc: 'No hidden costs, ever',
               },
               {
-                icon: Users,
+                icon: 'Users',
                 title: 'Priority Support',
                 desc: 'Direct line to our team',
               },
             ].map((item) => (
               <div key={item.title} className="card-bk p-4 text-center">
-                <item.icon size={24} className="text-accent mx-auto mb-2" />
+                <Icon
+                  name={item.icon}
+                  size={24}
+                  className="text-accent mx-auto mb-2"
+                />
                 <p className="font-semibold text-charcoal text-sm">
                   {item.title}
                 </p>
@@ -64,7 +68,7 @@ export default function Testimonials() {
             className="btn-accent inline-flex items-center gap-2"
           >
             Get Started
-            <ArrowRight size={16} />
+            <Icon name="ArrowRight" size={16} />
           </Link>
         </motion.div>
       </div>

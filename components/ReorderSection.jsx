@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { RefreshCw, Clock, Package } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Reorder section — shows mock previous order with one-click reorder.
@@ -18,7 +18,7 @@ export default function ReorderSection() {
             className="card-bk p-6 md:p-8"
           >
             <div className="flex items-center gap-2 mb-4">
-              <Clock size={18} className="text-kraft" />
+              <Icon name="Clock" size={18} className="text-kraft" />
               <h2 className="text-xl font-bold text-charcoal">Running low?</h2>
             </div>
 
@@ -29,7 +29,7 @@ export default function ReorderSection() {
             <div className="bg-warm-gray rounded-xl p-5 mb-4">
               <div className="flex items-start gap-4">
                 <div className="w-14 h-14 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
-                  <Package size={24} className="text-kraft" />
+                  <Icon name="Package" size={24} className="text-kraft" />
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-charcoal">
@@ -39,7 +39,7 @@ export default function ReorderSection() {
                     1,000 pieces · 3-Ply · Brown Kraft
                   </p>
                   <p className="text-xs text-text-tertiary mt-1 flex items-center gap-1">
-                    <Clock size={12} />
+                    <Icon name="Clock" size={12} />
                     Ordered 24 days ago
                   </p>
                 </div>
@@ -55,7 +55,7 @@ export default function ReorderSection() {
               whileTap={{ scale: 0.98 }}
               className="btn-accent w-full flex items-center justify-center gap-2"
             >
-              <RefreshCw size={16} />
+              <Icon name="RefreshCw" size={16} />
               Reorder 1,000 pieces
             </motion.button>
           </motion.div>

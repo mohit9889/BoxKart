@@ -3,25 +3,14 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import {
-  User,
-  MapPin,
-  ShoppingBag,
-  CreditCard,
-  CheckCircle,
-  ArrowLeft,
-  ArrowRight,
-  Package,
-  Truck,
-  Loader2,
-} from 'lucide-react';
 import { useCart } from '@/lib/cart';
+import Icon from '@/components/Icon';
 
 const STEPS = [
-  { id: 1, label: 'Contact', icon: User },
-  { id: 2, label: 'Delivery', icon: MapPin },
-  { id: 3, label: 'Summary', icon: ShoppingBag },
-  { id: 4, label: 'Payment', icon: CreditCard },
+  { id: 1, label: 'Contact', icon: 'User' },
+  { id: 2, label: 'Delivery', icon: 'MapPin' },
+  { id: 3, label: 'Summary', icon: 'ShoppingBag' },
+  { id: 4, label: 'Payment', icon: 'CreditCard' },
 ];
 
 /**
@@ -72,7 +61,11 @@ export default function CheckoutPage() {
   if (items.length === 0 && !orderPlaced) {
     return (
       <div className="container-bk section-padding text-center">
-        <ShoppingBag size={64} className="text-border mx-auto mb-6" />
+        <Icon
+          name="ShoppingBag"
+          size={64}
+          className="text-border mx-auto mb-6"
+        />
         <h1 className="text-2xl font-bold text-charcoal mb-2">
           No items to checkout
         </h1>
@@ -95,7 +88,7 @@ export default function CheckoutPage() {
           transition={{ type: 'spring', delay: 0.2 }}
           className="w-20 h-20 bg-accent-light rounded-full flex items-center justify-center mx-auto mb-6"
         >
-          <CheckCircle size={40} className="text-accent" />
+          <Icon name="CheckCircle" size={40} className="text-accent" />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -144,7 +137,7 @@ export default function CheckoutPage() {
                     : 'bg-warm-gray text-text-tertiary'
               }`}
             >
-              <s.icon size={16} />
+              <Icon name={s.icon} size={16} />
               <span className="hidden sm:inline">{s.label}</span>
             </button>
             {i < STEPS.length - 1 && (
@@ -284,7 +277,7 @@ export default function CheckoutPage() {
                   onClick={() => setStep(2)}
                   className="btn-accent flex items-center gap-2"
                 >
-                  Continue <ArrowRight size={16} />
+                  Continue <Icon name="ArrowRight" size={16} />
                 </button>
               </div>
             </motion.div>
@@ -400,13 +393,13 @@ export default function CheckoutPage() {
                   onClick={() => setStep(1)}
                   className="btn-outline flex items-center gap-2"
                 >
-                  <ArrowLeft size={16} /> Back
+                  <Icon name="ArrowLeft" size={16} /> Back
                 </button>
                 <button
                   onClick={() => setStep(3)}
                   className="btn-accent flex items-center gap-2"
                 >
-                  Continue <ArrowRight size={16} />
+                  Continue <Icon name="ArrowRight" size={16} />
                 </button>
               </div>
             </motion.div>
@@ -437,7 +430,7 @@ export default function CheckoutPage() {
                       className="flex items-center justify-between py-3 border-b border-border"
                     >
                       <div className="flex items-center gap-3">
-                        <Package size={20} className="text-kraft" />
+                        <Icon name="Package" size={20} className="text-kraft" />
                         <div>
                           <p className="text-sm font-medium text-charcoal">
                             {item.product.name}
@@ -474,7 +467,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex items-center gap-2 text-xs text-text-tertiary mb-4">
-                <Truck size={14} />
+                <Icon name="Truck" size={14} />
                 Estimated delivery: 3–5 business days
               </div>
 
@@ -483,13 +476,13 @@ export default function CheckoutPage() {
                   onClick={() => setStep(2)}
                   className="btn-outline flex items-center gap-2"
                 >
-                  <ArrowLeft size={16} /> Back
+                  <Icon name="ArrowLeft" size={16} /> Back
                 </button>
                 <button
                   onClick={() => setStep(4)}
                   className="btn-accent flex items-center gap-2"
                 >
-                  Continue <ArrowRight size={16} />
+                  Continue <Icon name="ArrowRight" size={16} />
                 </button>
               </div>
             </motion.div>
@@ -507,7 +500,11 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-bold text-charcoal mb-4">Payment</h2>
 
               <div className="bg-info/10 border border-info/20 rounded-xl p-4 mb-6 text-center">
-                <CreditCard size={32} className="text-info mx-auto mb-2" />
+                <Icon
+                  name="CreditCard"
+                  size={32}
+                  className="text-info mx-auto mb-2"
+                />
                 <p className="text-sm font-medium text-charcoal mb-1">
                   Payment integration coming soon
                 </p>
@@ -531,7 +528,7 @@ export default function CheckoutPage() {
                   onClick={() => setStep(3)}
                   className="btn-outline flex items-center gap-2"
                 >
-                  <ArrowLeft size={16} /> Back
+                  <Icon name="ArrowLeft" size={16} /> Back
                 </button>
                 <motion.button
                   whileTap={{ scale: 0.98 }}
@@ -541,7 +538,7 @@ export default function CheckoutPage() {
                 >
                   {submitting ? (
                     <>
-                      <Loader2 size={16} className="animate-spin" />
+                      <Icon name="Loader2" size={16} className="animate-spin" />
                       Placing Order...
                     </>
                   ) : (

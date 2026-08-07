@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { ArrowRight, Package } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 /**
  * Strong closing CTA section before the footer.
@@ -18,7 +18,7 @@ export default function FinalCTA() {
           className="max-w-2xl mx-auto"
         >
           <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Package size={28} className="text-kraft-light" />
+            <Icon name="Package" size={28} className="text-kraft-light" />
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -36,7 +36,7 @@ export default function FinalCTA() {
                 className="inline-flex items-center gap-2 bg-white text-charcoal font-semibold px-6 py-3.5 rounded-full hover:bg-white/90 transition-colors"
               >
                 Find My Box
-                <ArrowRight size={18} />
+                <Icon name="ArrowRight" size={18} />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>

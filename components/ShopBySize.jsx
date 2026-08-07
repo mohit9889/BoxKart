@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { Package } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const SIZES = [
   {
@@ -68,7 +68,8 @@ export default function ShopBySize() {
                 <div
                   className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${size.gradient} flex items-center justify-center mx-auto mb-4`}
                 >
-                  <Package
+                  <Icon
+                    name="Package"
                     size={32}
                     className="text-kraft group-hover:scale-110 transition-transform"
                   />

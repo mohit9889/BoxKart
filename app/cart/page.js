@@ -2,16 +2,8 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import {
-  Trash2,
-  Minus,
-  Plus,
-  ShoppingBag,
-  ArrowRight,
-  Package,
-  Truck,
-} from 'lucide-react';
 import { useCart } from '@/lib/cart';
+import Icon from '@/components/Icon';
 
 /**
  * Full cart page with detailed item list, pricing, and checkout CTA.
@@ -31,7 +23,11 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="container-bk section-padding text-center">
-        <ShoppingBag size={64} className="text-border mx-auto mb-6" />
+        <Icon
+          name="ShoppingBag"
+          size={64}
+          className="text-border mx-auto mb-6"
+        />
         <h1 className="text-2xl font-bold text-charcoal mb-2">
           Your cart is empty
         </h1>
@@ -71,7 +67,7 @@ export default function CartPage() {
                 <div className="flex gap-4">
                   {/* Icon */}
                   <div className="w-20 h-20 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
-                    <Package size={32} className="text-kraft" />
+                    <Icon name="Package" size={32} className="text-kraft" />
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -92,7 +88,7 @@ export default function CartPage() {
                         className="p-2 rounded-lg hover:bg-red-50 text-text-tertiary hover:text-danger transition-colors"
                         aria-label={`Remove ${item.product.name}`}
                       >
-                        <Trash2 size={16} />
+                        <Icon name="Trash2" size={16} />
                       </button>
                     </div>
 
@@ -119,7 +115,7 @@ export default function CartPage() {
                               className="p-1.5 hover:bg-border rounded-l-lg"
                               aria-label="Decrease"
                             >
-                              <Minus size={14} />
+                              <Icon name="Minus" size={14} />
                             </button>
                             <span className="text-sm font-medium px-3">
                               {item.count}
@@ -131,7 +127,7 @@ export default function CartPage() {
                               className="p-1.5 hover:bg-border rounded-r-lg"
                               aria-label="Increase"
                             >
-                              <Plus size={14} />
+                              <Icon name="Plus" size={14} />
                             </button>
                           </div>
                         </div>
@@ -148,7 +144,7 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex items-center gap-1.5 mt-3 text-xs text-text-tertiary">
-                      <Truck size={12} />
+                      <Icon name="Truck" size={12} />
                       {item.product.deliveryEstimate}
                     </div>
                   </div>
@@ -203,7 +199,7 @@ export default function CartPage() {
               className="btn-accent w-full text-center flex items-center justify-center gap-2"
             >
               Continue to Checkout
-              <ArrowRight size={16} />
+              <Icon name="ArrowRight" size={16} />
             </Link>
 
             <Link

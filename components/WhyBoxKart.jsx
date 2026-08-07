@@ -1,43 +1,36 @@
 'use client';
 
 import { motion } from 'motion/react';
-import {
-  PackageMinus,
-  BadgeIndianRupee,
-  Truck,
-  ShieldCheck,
-  TrendingDown,
-  RefreshCw,
-} from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const FEATURES = [
   {
-    icon: PackageMinus,
+    icon: 'PackageMinus',
     title: 'Low MOQ',
     description: 'Start from 100 pieces. No massive minimum orders.',
   },
   {
-    icon: BadgeIndianRupee,
+    icon: 'BadgeIndianRupee',
     title: 'Transparent Pricing',
     description: 'Know your price before ordering. No hidden costs.',
   },
   {
-    icon: Truck,
+    icon: 'Truck',
     title: 'Fast Regional Delivery',
     description: 'Reliable delivery without unnecessary complexity.',
   },
   {
-    icon: ShieldCheck,
+    icon: 'ShieldCheck',
     title: 'Consistent Quality',
     description: 'Packaging you can reorder confidently, every time.',
   },
   {
-    icon: TrendingDown,
+    icon: 'TrendingDown',
     title: 'Bulk Savings',
     description: 'Better pricing as your volume grows.',
   },
   {
-    icon: RefreshCw,
+    icon: 'RefreshCw',
     title: 'Easy Reordering',
     description: 'Repeat your previous order in seconds.',
   },
@@ -76,7 +69,7 @@ export default function WhyBoxKart() {
             >
               <motion.div whileHover={{ y: -4 }} className="card-bk p-6 h-full">
                 <div className="w-11 h-11 rounded-xl bg-kraft-muted flex items-center justify-center mb-4">
-                  <feature.icon size={22} className="text-kraft" />
+                  <Icon name={feature.icon} size={22} className="text-kraft" />
                 </div>
                 <h3 className="font-semibold text-charcoal mb-2">
                   {feature.title}

@@ -1,22 +1,22 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Truck, ShieldCheck, Zap, Award } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const INDICATORS = [
   {
-    icon: ShieldCheck,
+    icon: 'ShieldCheck',
     label: 'Transparent Pricing',
     detail: 'See exactly what you pay',
   },
   {
-    icon: Truck,
+    icon: 'Truck',
     label: 'Fast Delivery',
     detail: 'Shipping across North India',
   },
-  { icon: Zap, label: 'Low MOQ', detail: 'Order from just 100 pieces' },
+  { icon: 'Zap', label: 'Low MOQ', detail: 'Order from just 100 pieces' },
   {
-    icon: Award,
+    icon: 'Award',
     label: 'Early Access',
     detail: 'Join our seller community',
   },
@@ -40,7 +40,7 @@ export default function TrustIndicators() {
               className="flex items-center gap-3"
             >
               <div className="w-10 h-10 rounded-xl bg-accent-light flex items-center justify-center shrink-0">
-                <item.icon size={20} className="text-accent" />
+                <Icon name={item.icon} size={20} className="text-accent" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-charcoal">

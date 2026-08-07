@@ -2,24 +2,15 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import {
-  Ruler,
-  Layers,
-  Printer,
-  Image as ImageIcon,
-  Scissors,
-  FileText,
-  CheckCircle,
-  Loader2,
-} from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const FEATURES = [
-  { icon: Ruler, label: 'Custom dimensions' },
-  { icon: Layers, label: '3-ply / 5-ply' },
-  { icon: Printer, label: 'Custom printing' },
-  { icon: ImageIcon, label: 'Brand logo' },
-  { icon: FileText, label: 'Inserts' },
-  { icon: Scissors, label: 'Die-cut packaging' },
+  { icon: 'Ruler', label: 'Custom dimensions' },
+  { icon: 'Layers', label: '3-ply / 5-ply' },
+  { icon: 'Printer', label: 'Custom printing' },
+  { icon: 'Image', label: 'Brand logo' },
+  { icon: 'FileText', label: 'Inserts' },
+  { icon: 'Scissors', label: 'Die-cut packaging' },
 ];
 
 /**
@@ -80,7 +71,11 @@ export default function CustomPackaging() {
                   key={f.label}
                   className="flex items-center gap-2.5 bg-white/5 rounded-xl p-3"
                 >
-                  <f.icon size={18} className="text-kraft-light shrink-0" />
+                  <Icon
+                    name={f.icon}
+                    size={18}
+                    className="text-kraft-light shrink-0"
+                  />
                   <span className="text-sm font-medium text-white/90">
                     {f.label}
                   </span>
@@ -126,7 +121,11 @@ export default function CustomPackaging() {
                     transition={{ delay: 0.2, type: 'spring' }}
                     className="w-16 h-16 bg-accent-light rounded-full flex items-center justify-center mx-auto mb-4"
                   >
-                    <CheckCircle size={32} className="text-accent" />
+                    <Icon
+                      name="CheckCircle"
+                      size={32}
+                      className="text-accent"
+                    />
                   </motion.div>
                   <h3 className="text-xl font-bold text-charcoal mb-2">
                     Quote request received!
@@ -378,7 +377,11 @@ export default function CustomPackaging() {
                   >
                     {formState === 'loading' ? (
                       <>
-                        <Loader2 size={16} className="animate-spin" />
+                        <Icon
+                          name="Loader2"
+                          size={16}
+                          className="animate-spin"
+                        />
                         Submitting...
                       </>
                     ) : (

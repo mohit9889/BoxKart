@@ -2,33 +2,19 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import {
-  Shirt,
-  Sparkles,
-  Smartphone,
-  BookOpen,
-  Footprints,
-  UtensilsCrossed,
-  Home,
-  MoreHorizontal,
-  ArrowRight,
-  ArrowLeft,
-  Ruler,
-  Hash,
-  Package,
-} from 'lucide-react';
 import Link from 'next/link';
 import { products, getPriceForQuantity } from '@/data/products';
+import Icon from '@/components/Icon';
 
 const CATEGORIES = [
-  { id: 'clothing', label: 'Clothing', icon: Shirt },
-  { id: 'cosmetics', label: 'Cosmetics', icon: Sparkles },
-  { id: 'electronics', label: 'Electronics', icon: Smartphone },
-  { id: 'books', label: 'Books', icon: BookOpen },
-  { id: 'shoes', label: 'Shoes', icon: Footprints },
-  { id: 'food', label: 'Food', icon: UtensilsCrossed },
-  { id: 'home', label: 'Home & Lifestyle', icon: Home },
-  { id: 'other', label: 'Other', icon: MoreHorizontal },
+  { id: 'clothing', label: 'Clothing', icon: 'Shirt' },
+  { id: 'cosmetics', label: 'Cosmetics', icon: 'Sparkles' },
+  { id: 'electronics', label: 'Electronics', icon: 'Smartphone' },
+  { id: 'books', label: 'Books', icon: 'BookOpen' },
+  { id: 'shoes', label: 'Shoes', icon: 'Footprints' },
+  { id: 'food', label: 'Food', icon: 'UtensilsCrossed' },
+  { id: 'home', label: 'Home & Lifestyle', icon: 'Home' },
+  { id: 'other', label: 'Other', icon: 'MoreHorizontal' },
 ];
 
 const QUANTITIES = [100, 500, 1000, 5000, 10000];
@@ -214,7 +200,7 @@ export default function BoxFinder() {
                           : ''
                       }`}
                     >
-                      <cat.icon size={28} className="text-kraft" />
+                      <Icon name={cat.icon} size={28} className="text-kraft" />
                       <span className="text-sm font-medium text-charcoal">
                         {cat.label}
                       </span>
@@ -234,7 +220,7 @@ export default function BoxFinder() {
                 transition={{ duration: 0.3 }}
               >
                 <h3 className="text-lg font-semibold text-charcoal text-center mb-6 flex items-center justify-center gap-2">
-                  <Ruler size={20} className="text-kraft" />
+                  <Icon name="Ruler" size={20} className="text-kraft" />
                   Enter your product size
                 </h3>
 
@@ -297,7 +283,7 @@ export default function BoxFinder() {
                       onClick={() => setStep(1)}
                       className="btn-outline flex-1 flex items-center justify-center gap-1"
                     >
-                      <ArrowLeft size={16} />
+                      <Icon name="ArrowLeft" size={16} />
                       Back
                     </button>
                     <button
@@ -306,7 +292,7 @@ export default function BoxFinder() {
                       className="btn-accent flex-1 flex items-center justify-center gap-1 disabled:opacity-50"
                     >
                       Next
-                      <ArrowRight size={16} />
+                      <Icon name="ArrowRight" size={16} />
                     </button>
                   </div>
                 </div>
@@ -325,7 +311,7 @@ export default function BoxFinder() {
                 {!showResult ? (
                   <div>
                     <h3 className="text-lg font-semibold text-charcoal text-center mb-6 flex items-center justify-center gap-2">
-                      <Hash size={20} className="text-kraft" />
+                      <Icon name="Hash" size={20} className="text-kraft" />
                       How many do you need?
                     </h3>
                     <div className="flex flex-wrap justify-center gap-3 mb-6">
@@ -352,7 +338,7 @@ export default function BoxFinder() {
                         onClick={() => setStep(2)}
                         className="btn-outline flex items-center gap-1"
                       >
-                        <ArrowLeft size={16} />
+                        <Icon name="ArrowLeft" size={16} />
                         Back
                       </button>
                     </div>
@@ -366,7 +352,8 @@ export default function BoxFinder() {
                   >
                     {!recommendation ? (
                       <div className="card-bk p-8 max-w-md mx-auto text-center">
-                        <Package
+                        <Icon
+                          name="Package"
                           size={48}
                           className="text-text-tertiary mx-auto mb-4"
                         />
@@ -398,14 +385,22 @@ export default function BoxFinder() {
                     ) : (
                       <>
                         <h3 className="text-lg font-semibold text-charcoal text-center mb-6 flex items-center justify-center gap-2">
-                          <Package size={20} className="text-accent" />
+                          <Icon
+                            name="Package"
+                            size={20}
+                            className="text-accent"
+                          />
                           Recommended Packaging
                         </h3>
 
                         <div className="card-bk p-6 max-w-md mx-auto">
                           <div className="flex items-start gap-4 mb-4">
                             <div className="w-16 h-16 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
-                              <Package size={28} className="text-kraft" />
+                              <Icon
+                                name="Package"
+                                size={28}
+                                className="text-kraft"
+                              />
                             </div>
                             <div>
                               <p className="text-xs text-text-tertiary mb-0.5">
