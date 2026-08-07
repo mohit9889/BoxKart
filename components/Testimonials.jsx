@@ -1,50 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Quote, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-
-const TESTIMONIALS = [
-  {
-    name: 'Priya Sharma',
-    role: 'Founder, NaturGlow Cosmetics',
-    text: 'BoxKart solved our biggest headache. We used to waste hours finding the right box sizes for our skincare products. Now we order in 2 minutes.',
-    rating: 5,
-  },
-  {
-    name: 'Rajesh Menon',
-    role: 'Operations, UrbanFeet Shoes',
-    text: 'The bulk pricing is transparent and fair. We switched from our local supplier and saved almost 20% on packaging costs. Delivery is always on time.',
-    rating: 5,
-  },
-  {
-    name: 'Ananya Gupta',
-    role: 'CEO, ThreadCraft Fashion',
-    text: 'As a growing D2C brand, we needed reliable packaging without dealing with high MOQs. BoxKart lets us start small and scale up easily.',
-    rating: 5,
-  },
-  {
-    name: 'Vikram Patel',
-    role: 'Amazon Seller',
-    text: 'The reorder feature is brilliant. I reorder 500 boxes every month with one click. No more back-and-forth with suppliers.',
-    rating: 5,
-  },
-];
+import Link from 'next/link';
+import { Users, ArrowRight, Package, Sparkles } from 'lucide-react';
 
 /**
- * Customer testimonials with carousel navigation.
+ * Early seller community CTA — replaces fake testimonials
+ * with an honest call-to-action for the MVP phase.
  */
 export default function Testimonials() {
-  const [current, setCurrent] = useState(0);
-
-  const next = () => setCurrent((prev) => (prev + 1) % TESTIMONIALS.length);
-  const prev = () =>
-    setCurrent(
-      (prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length
-    );
-
-  const testimonial = TESTIMONIALS[current];
-
   return (
     <section className="section-padding bg-white">
       <div className="container-bk">
@@ -52,76 +16,57 @@ export default function Testimonials() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10"
+          className="max-w-2xl mx-auto text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-charcoal mb-3">
-            Loved by sellers across India
-          </h2>
-        </motion.div>
-
-        <div className="max-w-2xl mx-auto">
-          <motion.div
-            key={current}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            className="card-bk p-8 text-center"
-          >
-            <Quote size={32} className="text-kraft-muted mx-auto mb-4" />
-
-            <div className="flex justify-center gap-1 mb-4">
-              {Array.from({ length: testimonial.rating }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  className="text-warning"
-                  fill="currentColor"
-                />
-              ))}
-            </div>
-
-            <p className="text-lg text-charcoal leading-relaxed mb-6 italic">
-              &quot;{testimonial.text}&quot;
-            </p>
-
-            <div>
-              <p className="font-semibold text-charcoal">{testimonial.name}</p>
-              <p className="text-sm text-text-secondary">{testimonial.role}</p>
-            </div>
-          </motion.div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <button
-              onClick={prev}
-              className="p-2 rounded-full hover:bg-warm-gray transition-colors"
-              aria-label="Previous testimonial"
-            >
-              <ChevronLeft size={20} className="text-text-secondary" />
-            </button>
-
-            <div className="flex gap-2">
-              {TESTIMONIALS.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrent(i)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    i === current ? 'bg-kraft w-6' : 'bg-border'
-                  }`}
-                  aria-label={`Go to testimonial ${i + 1}`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={next}
-              className="p-2 rounded-full hover:bg-warm-gray transition-colors"
-              aria-label="Next testimonial"
-            >
-              <ChevronRight size={20} className="text-text-secondary" />
-            </button>
+          <div className="w-16 h-16 bg-kraft-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Users size={28} className="text-kraft" />
           </div>
-        </div>
+
+          <h2 className="text-3xl md:text-4xl font-bold text-charcoal mb-4">
+            Join our early seller community
+          </h2>
+          <p className="text-text-secondary text-lg mb-8 leading-relaxed">
+            We&apos;re building BoxKart with direct input from sellers like you.
+            Get early access to bulk pricing, priority support, and help shape
+            the platform.
+          </p>
+
+          <div className="grid sm:grid-cols-3 gap-4 mb-8">
+            {[
+              {
+                icon: Package,
+                title: 'Low MOQ',
+                desc: 'Start with just 100 boxes',
+              },
+              {
+                icon: Sparkles,
+                title: 'Transparent Pricing',
+                desc: 'No hidden costs, ever',
+              },
+              {
+                icon: Users,
+                title: 'Priority Support',
+                desc: 'Direct line to our team',
+              },
+            ].map((item) => (
+              <div key={item.title} className="card-bk p-4 text-center">
+                <item.icon size={24} className="text-accent mx-auto mb-2" />
+                <p className="font-semibold text-charcoal text-sm">
+                  {item.title}
+                </p>
+                <p className="text-xs text-text-secondary mt-1">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/#custom-packaging"
+            className="btn-accent inline-flex items-center gap-2"
+          >
+            Get Started
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

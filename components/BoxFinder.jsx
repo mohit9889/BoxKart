@@ -18,6 +18,7 @@ import {
   Package,
 } from 'lucide-react';
 import Link from 'next/link';
+import { products, getPriceForQuantity } from '@/data/products';
 
 const CATEGORIES = [
   { id: 'clothing', label: 'Clothing', icon: Shirt },
@@ -32,89 +33,45 @@ const CATEGORIES = [
 
 const QUANTITIES = [100, 500, 1000, 5000, 10000];
 
-/** Size recommendations by category. */
-const RECOMMENDATIONS = {
-  clothing: {
-    l: 12,
-    w: 10,
-    h: 3,
-    name: 'Garment Box',
-    dim: '12 × 10 × 3"',
-    ply: '3-Ply',
-    price: 11.0,
-    slug: 'garment-box-12x10x3',
-  },
-  cosmetics: {
-    l: 8,
-    w: 6,
-    h: 4,
-    name: 'Medium Shipping Box',
-    dim: '8 × 6 × 4"',
-    ply: '3-Ply',
-    price: 8.9,
-    slug: 'medium-shipping-box-8x6x4',
-  },
-  electronics: {
-    l: 12,
-    w: 10,
-    h: 8,
-    name: 'Heavy Duty 5-Ply Box',
-    dim: '12 × 10 × 8"',
-    ply: '5-Ply',
-    price: 20.5,
-    slug: 'heavy-duty-5ply-box-12x10x8',
-  },
-  books: {
-    l: 10,
-    w: 8,
-    h: 2,
-    name: 'Book Mailer Box',
-    dim: '10 × 8 × 2"',
-    ply: '3-Ply',
-    price: 7.9,
-    slug: 'book-mailer-box-10x8x2',
-  },
-  shoes: {
-    l: 14,
-    w: 9,
-    h: 5,
-    name: 'Shoe Box',
-    dim: '14 × 9 × 5"',
-    ply: '3-Ply',
-    price: 12.5,
-    slug: 'shoe-box-14x9x5',
-  },
-  food: {
-    l: 10,
-    w: 8,
-    h: 4,
-    name: 'Standard Shipping Box',
-    dim: '10 × 8 × 4"',
-    ply: '3-Ply',
-    price: 10.5,
-    slug: 'standard-shipping-box-10x8x4',
-  },
-  home: {
-    l: 12,
-    w: 10,
-    h: 6,
-    name: 'Large Shipping Box',
-    dim: '12 × 10 × 6"',
-    ply: '3-Ply',
-    price: 14.0,
-    slug: 'large-shipping-box-12x10x6',
-  },
-  other: {
-    l: 10,
-    w: 8,
-    h: 4,
-    name: 'Standard Shipping Box',
-    dim: '10 × 8 × 4"',
-    ply: '3-Ply',
-    price: 10.5,
-    slug: 'standard-shipping-box-10x8x4',
-  },
+/** Default product dimensions by category (inches) for pre-filling. */
+const CATEGORY_DEFAULTS = {
+  clothing: { l: 11, w: 9, h: 2 },
+  cosmetics: { l: 6, w: 4, h: 3 },
+  electronics: { l: 10, w: 8, h: 6 },
+  books: { l: 9, w: 7, h: 1.5 },
+  shoes: { l: 13, w: 8, h: 4 },
+  food: { l: 8, w: 6, h: 3 },
+  home: { l: 11, w: 9, h: 5 },
+  other: { l: 8, w: 6, h: 3 },
 };
+
+/**
+ * Finds the best-fit box from the product catalogue.
+ * Adds 0.5" clearance on each dimension before matching.
+ */
+function findBestBox(reqL, reqW, reqH) {
+  const reqDims = [reqL, reqW, reqH].sort((a, b) => b - a);
+
+  const matchingBoxes = products.filter((p) => {
+    if (!p.length || !p.width || !p.height) return false;
+    if (p.category !== 'corrugated-boxes') return false;
+    const boxDims = [p.length, p.width, p.height].sort((a, b) => b - a);
+    return (
+      boxDims[0] >= reqDims[0] &&
+      boxDims[1] >= reqDims[1] &&
+      boxDims[2] >= reqDims[2]
+    );
+  });
+
+  if (matchingBoxes.length === 0) return null;
+
+  // Best Fit = smallest volume that fits
+  return matchingBoxes.reduce((best, current) => {
+    const bestVol = best.length * best.width * best.height;
+    const currentVol = current.length * current.width * current.height;
+    return currentVol < bestVol ? current : best;
+  });
+}
 
 /**
  * 3-step interactive Box Finder.
@@ -129,13 +86,22 @@ export default function BoxFinder() {
   const [unit, setUnit] = useState('inch');
   const [quantity, setQuantity] = useState(1000);
   const [showResult, setShowResult] = useState(false);
-
-  const recommendation = category ? RECOMMENDATIONS[category] : null;
+  const [recommendation, setRecommendation] = useState(null);
 
   const handleCategorySelect = (id) => {
     setCategory(id);
-    const rec = RECOMMENDATIONS[id];
-    if (rec) setDims({ l: rec.l, w: rec.w, h: rec.h });
+    const defaults = CATEGORY_DEFAULTS[id];
+    if (defaults) {
+      if (unit === 'cm') {
+        setDims({
+          l: (defaults.l * 2.54).toFixed(1),
+          w: (defaults.w * 2.54).toFixed(1),
+          h: (defaults.h * 2.54).toFixed(1),
+        });
+      } else {
+        setDims({ l: defaults.l, w: defaults.w, h: defaults.h });
+      }
+    }
     setStep(2);
   };
 
@@ -145,6 +111,20 @@ export default function BoxFinder() {
 
   const handleQuantitySelect = (qty) => {
     setQuantity(qty);
+
+    const lVal = parseFloat(dims.l) || 0;
+    const wVal = parseFloat(dims.w) || 0;
+    const hVal = parseFloat(dims.h) || 0;
+
+    const factor = unit === 'cm' ? 0.393701 : 1;
+    const clearance = 0.5;
+
+    const reqL = lVal * factor + clearance;
+    const reqW = wVal * factor + clearance;
+    const reqH = hVal * factor + clearance;
+
+    const bestBox = findBestBox(reqL, reqW, reqH);
+    setRecommendation(bestBox);
     setShowResult(true);
   };
 
@@ -153,11 +133,15 @@ export default function BoxFinder() {
     setCategory(null);
     setDims({ l: '', w: '', h: '' });
     setShowResult(false);
+    setRecommendation(null);
     setQuantity(1000);
   };
 
+  const recPrice = recommendation
+    ? getPriceForQuantity(recommendation, quantity)
+    : 0;
   const totalPrice = recommendation
-    ? (recommendation.price * quantity).toLocaleString('en-IN')
+    ? (recPrice * quantity).toLocaleString('en-IN')
     : '0';
 
   return (
@@ -259,7 +243,17 @@ export default function BoxFinder() {
                     {['cm', 'inch'].map((u) => (
                       <button
                         key={u}
-                        onClick={() => setUnit(u)}
+                        onClick={() => {
+                          if (unit !== u && dims.l && dims.w && dims.h) {
+                            const f = u === 'cm' ? 2.54 : 0.393701;
+                            setDims({
+                              l: (parseFloat(dims.l) * f).toFixed(1),
+                              w: (parseFloat(dims.w) * f).toFixed(1),
+                              h: (parseFloat(dims.h) * f).toFixed(1),
+                            });
+                          }
+                          setUnit(u);
+                        }}
                         className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                           unit === u
                             ? 'bg-charcoal text-white'
@@ -308,7 +302,8 @@ export default function BoxFinder() {
                     </button>
                     <button
                       onClick={handleDimsNext}
-                      className="btn-accent flex-1 flex items-center justify-center gap-1"
+                      disabled={!dims.l || !dims.w || !dims.h}
+                      className="btn-accent flex-1 flex items-center justify-center gap-1 disabled:opacity-50"
                     >
                       Next
                       <ArrowRight size={16} />
@@ -369,82 +364,119 @@ export default function BoxFinder() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <h3 className="text-lg font-semibold text-charcoal text-center mb-6 flex items-center justify-center gap-2">
-                      <Package size={20} className="text-accent" />
-                      Recommended Packaging
-                    </h3>
-
-                    <div className="card-bk p-6 max-w-md mx-auto">
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="w-16 h-16 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
-                          <Package size={28} className="text-kraft" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-text-tertiary mb-0.5">
-                            {recommendation?.dim}
-                          </p>
-                          <p className="font-bold text-charcoal text-lg">
-                            {recommendation?.name}
-                          </p>
-                          <p className="text-sm text-text-secondary">
-                            {recommendation?.ply} Corrugated Box
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="bg-warm-gray rounded-xl p-4 mb-4 space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-text-secondary">
-                            Price per piece
-                          </span>
-                          <span className="font-semibold text-charcoal">
-                            ₹{recommendation?.price?.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-text-secondary">Quantity</span>
-                          <span className="font-semibold text-charcoal">
-                            {quantity.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-text-secondary">MOQ</span>
-                          <span className="font-semibold text-charcoal">
-                            100
-                          </span>
-                        </div>
-                        <div className="border-t border-border pt-2 mt-2 flex justify-between">
-                          <span className="text-text-secondary font-medium">
-                            Estimated Total
-                          </span>
-                          <span className="font-bold text-lg text-charcoal">
-                            ₹{totalPrice}
-                          </span>
+                    {!recommendation ? (
+                      <div className="card-bk p-8 max-w-md mx-auto text-center">
+                        <Package
+                          size={48}
+                          className="text-text-tertiary mx-auto mb-4"
+                        />
+                        <h3 className="text-lg font-bold text-charcoal mb-2">
+                          No matching box found
+                        </h3>
+                        <p className="text-text-secondary mb-6">
+                          We couldn&apos;t find a standard box for those
+                          dimensions. Try a custom quote instead.
+                        </p>
+                        <div className="flex gap-3 justify-center">
+                          <button
+                            onClick={() => {
+                              setShowResult(false);
+                              setStep(2);
+                            }}
+                            className="btn-outline"
+                          >
+                            Try different dimensions
+                          </button>
+                          <Link
+                            href="/#custom-packaging"
+                            className="btn-accent"
+                          >
+                            Custom Quote
+                          </Link>
                         </div>
                       </div>
+                    ) : (
+                      <>
+                        <h3 className="text-lg font-semibold text-charcoal text-center mb-6 flex items-center justify-center gap-2">
+                          <Package size={20} className="text-accent" />
+                          Recommended Packaging
+                        </h3>
 
-                      <div className="flex gap-3">
-                        <Link
-                          href={`/products/${recommendation?.slug}`}
-                          className="btn-accent flex-1 text-center"
-                        >
-                          Buy This Box
-                        </Link>
-                        <Link
-                          href="/products?category=corrugated-boxes"
-                          className="btn-outline flex-1 text-center"
-                        >
-                          See Similar
-                        </Link>
-                      </div>
+                        <div className="card-bk p-6 max-w-md mx-auto">
+                          <div className="flex items-start gap-4 mb-4">
+                            <div className="w-16 h-16 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
+                              <Package size={28} className="text-kraft" />
+                            </div>
+                            <div>
+                              <p className="text-xs text-text-tertiary mb-0.5">
+                                {recommendation.dimensions}
+                              </p>
+                              <p className="font-bold text-charcoal text-lg">
+                                {recommendation.name}
+                              </p>
+                              <p className="text-sm text-text-secondary">
+                                {recommendation.ply} Corrugated Box
+                              </p>
+                            </div>
+                          </div>
 
-                      <button
-                        onClick={handleReset}
-                        className="w-full text-center text-sm text-text-tertiary hover:text-charcoal transition-colors mt-4"
-                      >
-                        Start Over
-                      </button>
-                    </div>
+                          <div className="bg-warm-gray rounded-xl p-4 mb-4 space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-text-secondary">
+                                Price per piece
+                              </span>
+                              <span className="font-semibold text-charcoal">
+                                ₹{recPrice.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-text-secondary">
+                                Quantity
+                              </span>
+                              <span className="font-semibold text-charcoal">
+                                {quantity.toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-text-secondary">MOQ</span>
+                              <span className="font-semibold text-charcoal">
+                                {recommendation.moq}
+                              </span>
+                            </div>
+                            <div className="border-t border-border pt-2 mt-2 flex justify-between">
+                              <span className="text-text-secondary font-medium">
+                                Estimated Total
+                              </span>
+                              <span className="font-bold text-lg text-charcoal">
+                                ₹{totalPrice}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3">
+                            <Link
+                              href={`/products/${recommendation.slug}`}
+                              className="btn-accent flex-1 text-center"
+                            >
+                              Buy This Box
+                            </Link>
+                            <Link
+                              href="/products?category=corrugated-boxes"
+                              className="btn-outline flex-1 text-center"
+                            >
+                              See Similar
+                            </Link>
+                          </div>
+
+                          <button
+                            onClick={handleReset}
+                            className="w-full text-center text-sm text-text-tertiary hover:text-charcoal transition-colors mt-4"
+                          >
+                            Start Over
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </motion.div>

@@ -6,19 +6,19 @@ import { Truck, ShieldCheck, Zap, Award } from 'lucide-react';
 const INDICATORS = [
   {
     icon: ShieldCheck,
-    label: 'Quality Assured',
-    detail: 'Consistent packaging quality',
+    label: 'Transparent Pricing',
+    detail: 'See exactly what you pay',
   },
   {
     icon: Truck,
-    label: 'Pan-India Delivery',
-    detail: 'Fast shipping across India',
+    label: 'Fast Delivery',
+    detail: 'Shipping across North India',
   },
   { icon: Zap, label: 'Low MOQ', detail: 'Order from just 100 pieces' },
   {
     icon: Award,
-    label: '2,000+ Sellers',
-    detail: 'Trust BoxKart for packaging',
+    label: 'Early Access',
+    detail: 'Join our seller community',
   },
 ];
 

@@ -13,6 +13,8 @@ const SORT_OPTIONS = [
   { label: 'Popular', value: 'popular' },
   { label: 'Price: Low → High', value: 'price-asc' },
   { label: 'Price: High → Low', value: 'price-desc' },
+  { label: 'Best Value', value: 'best-value' },
+  { label: 'Lowest MOQ', value: 'moq-asc' },
   { label: 'Name', value: 'name' },
 ];
 
@@ -23,6 +25,7 @@ function ProductsPageContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || '';
   const searchQuery = searchParams.get('search') || '';
+  const sizeFilter = searchParams.get('size') || '';
 
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedPly, setSelectedPly] = useState('');
@@ -54,6 +57,18 @@ function ProductsPageContent() {
       result = result.filter((p) => p.ply === selectedPly);
     }
 
+    // Size filter from URL
+    if (sizeFilter) {
+      result = result.filter((p) => {
+        if (!p.length || !p.width || !p.height) return false;
+        const maxDim = Math.max(p.length, p.width, p.height);
+        if (sizeFilter === 'small') return maxDim <= 8;
+        if (sizeFilter === 'medium') return maxDim > 8 && maxDim <= 12;
+        if (sizeFilter === 'large') return maxDim > 12;
+        return true;
+      });
+    }
+
     // Sort
     switch (sortBy) {
       case 'price-asc':
@@ -70,6 +85,22 @@ function ProductsPageContent() {
             (a.pricingTiers?.[0]?.price || 0)
         );
         break;
+      case 'best-value': {
+        // Sort by lowest price at highest tier (best per-unit discount)
+        result.sort((a, b) => {
+          const aMin = Math.min(
+            ...(a.pricingTiers?.map((t) => t.price) || [999])
+          );
+          const bMin = Math.min(
+            ...(b.pricingTiers?.map((t) => t.price) || [999])
+          );
+          return aMin - bMin;
+        });
+        break;
+      }
+      case 'moq-asc':
+        result.sort((a, b) => (a.moq || 100) - (b.moq || 100));
+        break;
       case 'name':
         result.sort((a, b) => a.name.localeCompare(b.name));
         break;
@@ -78,7 +109,7 @@ function ProductsPageContent() {
     }
 
     return result;
-  }, [selectedCategory, selectedPly, sortBy, searchQuery]);
+  }, [selectedCategory, selectedPly, sortBy, searchQuery, sizeFilter]);
 
   const clearFilters = () => {
     setSelectedCategory('');

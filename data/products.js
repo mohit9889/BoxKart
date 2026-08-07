@@ -699,3 +699,84 @@ export function getProductBySlug(slug) {
 export function getPopularProducts() {
   return products.filter((p) => p.category === 'corrugated-boxes').slice(0, 8);
 }
+
+/**
+ * Enrichment data: extra fields added per-product for supplier,
+ * manufacturing specs, and suitability information.
+ */
+const ENRICHMENT = {
+  'cb-6x4x3': {
+    supplierId: 'sup-delhi-packco',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: ['Items over 2 kg', 'Fragile glass without padding'],
+  },
+  'cb-8x6x4': {
+    supplierId: 'sup-ncr-corrugators',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: ['Items over 5 kg', 'Heavy machinery parts'],
+  },
+  'cb-10x8x4': {
+    supplierId: 'sup-gurgaon-boxes',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: [
+      'Items over 5 kg',
+      'Liquid products without inner seal',
+    ],
+  },
+  'cb-12x10x6': {
+    supplierId: 'sup-delhi-packco',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: ['Items over 8 kg', 'Very fragile items without wrap'],
+  },
+  'cb-10x8x2': {
+    supplierId: 'sup-ncr-corrugators',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: ['Thick items over 2 inches', 'Heavy items over 3 kg'],
+  },
+  'cb-12x10x3': {
+    supplierId: 'sup-gurgaon-boxes',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: ['Heavy garments', 'Items over 5 kg'],
+  },
+  'cb-14x9x5': {
+    supplierId: 'sup-delhi-packco',
+    gsm: 150,
+    flute: 'B Flute',
+    notRecommendedFor: ['Boots or heavy footwear', 'Items over 5 kg'],
+  },
+  'cb-5ply-12x10x8': {
+    supplierId: 'sup-ncr-corrugators',
+    gsm: 250,
+    flute: 'BC Flute',
+    notRecommendedFor: [
+      'Items over 15 kg',
+      'Extremely fragile items without cushioning',
+    ],
+  },
+  'cb-5ply-16x12x10': {
+    supplierId: 'sup-gurgaon-boxes',
+    gsm: 250,
+    flute: 'BC Flute',
+    notRecommendedFor: ['Items over 20 kg', 'Hazardous materials'],
+  },
+  'cb-diecut-8x6x2': {
+    supplierId: 'sup-delhi-packco',
+    gsm: 150,
+    flute: 'E Flute',
+    notRecommendedFor: ['Items over 1 kg', 'Thick or bulky products'],
+  },
+};
+
+// Enrich products with extra data
+products.forEach((p) => {
+  const extra = ENRICHMENT[p.id];
+  if (extra) {
+    Object.assign(p, extra);
+  }
+});

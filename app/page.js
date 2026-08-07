@@ -3,6 +3,7 @@ import TrustIndicators from '@/components/TrustIndicators';
 import BoxFinder from '@/components/BoxFinder';
 import CategorySection from '@/components/CategorySection';
 import PopularBoxes from '@/components/PopularBoxes';
+import ShopBySize from '@/components/ShopBySize';
 import BulkPricing from '@/components/BulkPricing';
 import WhyBoxKart from '@/components/WhyBoxKart';
 import CustomPackaging from '@/components/CustomPackaging';
@@ -24,6 +25,7 @@ export default function HomePage() {
       <TrustIndicators />
       <BoxFinder />
       <CategorySection />
+      <ShopBySize />
       <PopularBoxes />
       <BulkPricing />
       <WhyBoxKart />

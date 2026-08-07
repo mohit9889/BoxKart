@@ -36,6 +36,7 @@ export default function CheckoutPage() {
 
   const [contact, setContact] = useState({
     name: '',
+    business: '',
     email: '',
     phone: '',
     gst: '',
@@ -172,23 +173,42 @@ export default function CheckoutPage() {
                 Contact Details
               </h2>
               <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="co-name"
-                    className="block text-sm font-medium text-text-secondary mb-1"
-                  >
-                    Full Name *
-                  </label>
-                  <input
-                    id="co-name"
-                    className="input-bk"
-                    value={contact.name}
-                    onChange={(e) =>
-                      setContact({ ...contact, name: e.target.value })
-                    }
-                    required
-                    placeholder="Your full name"
-                  />
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="co-name"
+                      className="block text-sm font-medium text-text-secondary mb-1"
+                    >
+                      Full Name *
+                    </label>
+                    <input
+                      id="co-name"
+                      className="input-bk"
+                      value={contact.name}
+                      onChange={(e) =>
+                        setContact({ ...contact, name: e.target.value })
+                      }
+                      required
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="co-business"
+                      className="block text-sm font-medium text-text-secondary mb-1"
+                    >
+                      Business Name
+                    </label>
+                    <input
+                      id="co-business"
+                      className="input-bk"
+                      value={contact.business}
+                      onChange={(e) =>
+                        setContact({ ...contact, business: e.target.value })
+                      }
+                      placeholder="Your company / brand name"
+                    />
+                  </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
@@ -235,17 +255,28 @@ export default function CheckoutPage() {
                     htmlFor="co-gst"
                     className="block text-sm font-medium text-text-secondary mb-1"
                   >
-                    GST Number (optional)
+                    GSTIN{' '}
+                    <span className="text-xs text-text-tertiary">
+                      (for GST invoice)
+                    </span>
                   </label>
                   <input
                     id="co-gst"
                     className="input-bk"
                     value={contact.gst}
                     onChange={(e) =>
-                      setContact({ ...contact, gst: e.target.value })
+                      setContact({
+                        ...contact,
+                        gst: e.target.value.toUpperCase(),
+                      })
                     }
                     placeholder="22AAAAA0000A1Z5"
+                    maxLength={15}
                   />
+                  <p className="text-xs text-text-tertiary mt-1">
+                    15-character GST number. Leave blank to order as an
+                    individual.
+                  </p>
                 </div>
               </div>
               <div className="flex justify-end mt-6">

@@ -26,7 +26,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 px-3 py-1.5 bg-kraft-muted rounded-full text-sm font-medium text-kraft mb-6"
             >
               <Package size={14} />
-              Trusted by 2,000+ sellers across India
+              Launching for e-commerce sellers in North India
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight text-charcoal mb-6">
@@ -66,10 +66,41 @@ export default function Hero() {
               </motion.div>
             </div>
 
+            {/* What are you shipping? */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-8"
+            >
+              <p className="text-sm font-medium text-text-secondary mb-3">
+                What are you shipping?
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  'Clothing',
+                  'Cosmetics',
+                  'Electronics',
+                  'Books',
+                  'Shoes',
+                  'Food',
+                  'Other',
+                ].map((cat) => (
+                  <a
+                    key={cat}
+                    href="#box-finder"
+                    className="px-3 py-1.5 bg-warm-gray hover:bg-kraft-muted rounded-full text-xs font-medium text-text-secondary hover:text-charcoal transition-colors"
+                  >
+                    {cat}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
             {/* Quick Stats */}
             <div className="flex gap-8 mt-10 pt-8 border-t border-border">
               {[
-                { label: 'Products', value: '200+' },
+                { label: 'Products', value: '20+ SKUs' },
                 { label: 'Min. Order', value: '100 pcs' },
                 { label: 'Delivery', value: '3–5 days' },
               ].map((stat, i) => (

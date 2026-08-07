@@ -14,10 +14,16 @@ import {
   Tag,
   ChevronRight,
   FileText,
+  Info,
+  AlertTriangle,
+  TrendingDown,
+  X,
 } from 'lucide-react';
 import { products, getPriceForQuantity } from '@/data/products';
 import { useCart } from '@/lib/cart';
+import { getUpsellPrompt } from '@/lib/pricing';
 import BoxBlueprint from '@/components/BoxBlueprint';
+import PincodeChecker from '@/components/PincodeChecker';
 
 /**
  * Product detail page — shows full product info, pricing tiers,
@@ -31,6 +37,7 @@ export default function ProductDetailPage({ params }) {
     product?.pricingTiers?.[0]?.qty ?? 100
   );
   const [added, setAdded] = useState(false);
+  const [showBulkQuote, setShowBulkQuote] = useState(false);
 
   if (!product) {
     return (
@@ -174,6 +181,35 @@ export default function ProductDetailPage({ params }) {
               </div>
             </div>
 
+            {/* Savings Callout */}
+            {selectedQty > product.pricingTiers[0].qty &&
+              (() => {
+                const basePrice = product.pricingTiers[0].price;
+                const savings = (basePrice - currentPrice) * selectedQty;
+                if (savings <= 0) return null;
+                return (
+                  <div className="bg-accent-light/30 border border-accent/20 rounded-xl p-3 mb-3 flex items-center gap-2 text-sm">
+                    <TrendingDown size={16} className="text-accent shrink-0" />
+                    <span className="text-accent-dark font-medium">
+                      Save ₹{savings.toLocaleString('en-IN')} vs ordering{' '}
+                      {product.pricingTiers[0].qty.toLocaleString('en-IN')} at a
+                      time
+                    </span>
+                  </div>
+                );
+              })()}
+
+            {/* Upsell Prompt */}
+            {(() => {
+              const upsell = getUpsellPrompt(product, selectedQty);
+              if (!upsell) return null;
+              return (
+                <div className="bg-kraft-muted/30 border border-kraft/20 rounded-xl p-3 mb-3 text-sm text-kraft-dark">
+                  💡 {upsell.message}
+                </div>
+              );
+            })()}
+
             {/* Total */}
             <div className="bg-warm-gray rounded-xl p-4 mb-6 flex items-center justify-between">
               <div>
@@ -235,17 +271,20 @@ export default function ProductDetailPage({ params }) {
                   )}
                 </AnimatePresence>
               </motion.button>
-              <Link
-                href="/#custom-packaging"
+              <button
+                onClick={() => setShowBulkQuote(true)}
                 className="btn-outline flex items-center gap-2"
               >
                 <FileText size={16} />
                 Bulk Quote
-              </Link>
+              </button>
             </div>
 
+            {/* Pincode Checker */}
+            <PincodeChecker product={product} selectedQty={selectedQty} />
+
             {/* Specs */}
-            <div className="border-t border-border pt-6">
+            <div className="border-t border-border pt-6 mt-6">
               <h3 className="text-sm font-semibold text-charcoal mb-4 uppercase tracking-wider">
                 Specifications
               </h3>
@@ -267,6 +306,46 @@ export default function ProductDetailPage({ params }) {
               </div>
             </div>
 
+            {/* 3-Ply vs 5-Ply Explainer */}
+            {(product.ply === '3-Ply' || product.ply === '5-Ply') && (
+              <div className="border-t border-border pt-6 mt-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Info size={16} className="text-info" />
+                  <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider">
+                    What is {product.ply}?
+                  </h3>
+                </div>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {product.ply === '3-Ply'
+                    ? 'Three layers of paper — ideal for lightweight products up to 5 kg. Great for clothing, cosmetics, books, and small electronics. Cost-effective and recyclable.'
+                    : 'Five layers of paper with double corrugated fluting — provides superior crush resistance for heavier products up to 15 kg. Recommended for electronics, appliances, and items needing extra protection during transit.'}
+                </p>
+              </div>
+            )}
+
+            {/* Not Recommended For */}
+            {product.notRecommendedFor?.length > 0 && (
+              <div className="border-t border-border pt-6 mt-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle size={16} className="text-warning" />
+                  <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider">
+                    Not Recommended For
+                  </h3>
+                </div>
+                <ul className="space-y-1.5">
+                  {product.notRecommendedFor.map((item) => (
+                    <li
+                      key={item}
+                      className="text-sm text-text-secondary flex items-center gap-2"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Description */}
             <div className="border-t border-border pt-6 mt-6">
               <h3 className="text-sm font-semibold text-charcoal mb-2 uppercase tracking-wider">
@@ -282,6 +361,94 @@ export default function ProductDetailPage({ params }) {
 
       {/* Die-Cut Blueprint Section */}
       <BoxBlueprint product={product} />
+
+      {/* Bulk Quote Modal */}
+      <AnimatePresence>
+        {showBulkQuote && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50"
+              onClick={() => setShowBulkQuote(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 z-[51] w-[90vw] max-w-md shadow-xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-charcoal">
+                  Request Bulk Quote
+                </h2>
+                <button
+                  onClick={() => setShowBulkQuote(false)}
+                  className="p-2 rounded-full hover:bg-warm-gray"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <p className="text-sm text-text-secondary mb-4">
+                Need 5,000+ boxes? Fill in your details and we&apos;ll share a
+                custom quote within 24 hours.
+              </p>
+              <div className="bg-kraft-muted/30 rounded-xl p-3 mb-4 text-sm">
+                <span className="font-medium text-charcoal">
+                  {product.name}
+                </span>
+                <span className="text-text-secondary">
+                  {' '}
+                  — {product.dimensions}
+                </span>
+              </div>
+              <form
+                className="space-y-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setShowBulkQuote(false);
+                  alert(
+                    'Quote request submitted! We will contact you within 24 hours.'
+                  );
+                }}
+              >
+                <input
+                  className="input-bk text-sm"
+                  placeholder="Your Name *"
+                  required
+                />
+                <input
+                  className="input-bk text-sm"
+                  placeholder="Phone Number *"
+                  type="tel"
+                  required
+                />
+                <input
+                  className="input-bk text-sm"
+                  placeholder="Email"
+                  type="email"
+                />
+                <input
+                  className="input-bk text-sm"
+                  placeholder="Quantity (e.g. 10,000)"
+                  type="number"
+                  min="5000"
+                  required
+                />
+                <textarea
+                  className="input-bk text-sm"
+                  placeholder="Additional Notes (optional)"
+                  rows={2}
+                />
+                <button type="submit" className="btn-accent w-full">
+                  Submit Quote Request
+                </button>
+              </form>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Sticky Bottom CTA */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 z-40 md:hidden">
