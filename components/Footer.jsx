@@ -1,0 +1,144 @@
+import Link from 'next/link';
+import { Package, Mail, Phone, MapPin } from 'lucide-react';
+
+const PRODUCT_LINKS = [
+  { label: 'Corrugated Boxes', href: '/products?category=corrugated-boxes' },
+  { label: 'Courier Packaging', href: '/products?category=courier-packaging' },
+  { label: 'Protection Materials', href: '/products?category=protection' },
+  { label: 'Sealing & Labels', href: '/products?category=sealing' },
+  { label: 'Branding Materials', href: '/products?category=branding' },
+  { label: 'Packaging Bundles', href: '/#bundles' },
+];
+
+const COMPANY_LINKS = [
+  { label: 'About Us', href: '#' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'Bulk Orders', href: '/#bundles' },
+  { label: 'Custom Packaging', href: '/#custom-packaging' },
+  { label: 'Blog', href: '#' },
+  { label: 'Careers', href: '#' },
+];
+
+const SUPPORT_LINKS = [
+  { label: 'Help Centre', href: '#' },
+  { label: 'Shipping Policy', href: '#' },
+  { label: 'Returns & Refunds', href: '#' },
+  { label: 'Terms of Service', href: '#' },
+  { label: 'Privacy Policy', href: '#' },
+];
+
+/**
+ * Site footer with navigation links and contact information.
+ */
+export default function Footer() {
+  return (
+    <footer className="bg-charcoal text-white">
+      <div className="container-bk py-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          {/* Brand */}
+          <div>
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                <Package size={18} className="text-kraft-light" />
+              </div>
+              <span className="text-xl font-bold">
+                Box<span className="text-kraft-light">Kart</span>
+              </span>
+            </Link>
+            <p className="text-sm text-white/60 leading-relaxed mb-6">
+              Packaging made simple for your business. Boxes, mailers &
+              packaging supplies for growing e-commerce businesses.
+            </p>
+            <div className="space-y-2">
+              <a
+                href="mailto:hello@boxkart.in"
+                className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+              >
+                <Mail size={14} />
+                hello@boxkart.in
+              </a>
+              <a
+                href="tel:+919876543210"
+                className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
+              >
+                <Phone size={14} />
+                +91 98765 43210
+              </a>
+              <p className="flex items-start gap-2 text-sm text-white/60">
+                <MapPin size={14} className="shrink-0 mt-0.5" />
+                Mumbai, Maharashtra, India
+              </p>
+            </div>
+          </div>
+
+          {/* Products */}
+          <div>
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/40 mb-4">
+              Products
+            </h3>
+            <ul className="space-y-2.5">
+              {PRODUCT_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/40 mb-4">
+              Company
+            </h3>
+            <ul className="space-y-2.5">
+              {COMPANY_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/40 mb-4">
+              Support
+            </h3>
+            <ul className="space-y-2.5">
+              {SUPPORT_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/40">
+            © {new Date().getFullYear()} BoxKart. All rights reserved.
+          </p>
+          <p className="text-xs text-white/40">
+            Made with ❤️ in India for Indian e-commerce sellers
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
