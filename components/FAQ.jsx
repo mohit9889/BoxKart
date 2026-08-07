@@ -54,10 +54,8 @@ export default function FAQ() {
           viewport={{ once: true }}
           className="text-center mb-10"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-charcoal mb-3">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-text-secondary text-lg">
+          <h2 className="heading-2 mb-3">Frequently Asked Questions</h2>
+          <p className="text-body-lg">
             Everything you need to know about ordering packaging.
           </p>
         </motion.div>
@@ -76,6 +74,8 @@ export default function FAQ() {
                 onClick={() => toggle(i)}
                 className="w-full flex items-center justify-between p-5 text-left"
                 aria-expanded={openIdx === i}
+                aria-controls={`faq-panel-${i}`}
+                id={`faq-btn-${i}`}
               >
                 <span className="font-medium text-charcoal pr-4">{faq.q}</span>
                 <motion.div
@@ -99,6 +99,9 @@ export default function FAQ() {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
+                    id={`faq-panel-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-btn-${i}`}
                   >
                     <div className="px-5 pb-5 text-sm text-text-secondary leading-relaxed">
                       {faq.a}

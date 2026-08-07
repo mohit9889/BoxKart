@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { products } from '@/data/products';
 import { categories } from '@/data/categories';
 import ProductCard from '@/components/ProductCard';
+import { EmptyState, Skeleton } from '@/components/ui';
 import Icon from '@/components/Icon';
 
 const PLY_OPTIONS = ['3-Ply', '5-Ply', 'N/A'];
@@ -122,7 +123,7 @@ function ProductsPageContent() {
   return (
     <div className="container-bk section-padding">
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-charcoal mb-2">
+        <h1 className="heading-1 mb-2">
           {selectedCategory
             ? categories.find((c) => c.slug === selectedCategory)?.name ||
               'All Products'
@@ -130,7 +131,7 @@ function ProductsPageContent() {
               ? `Search: "${searchQuery}"`
               : 'All Packaging Products'}
         </h1>
-        <p className="text-text-secondary">
+        <p className="text-body">
           {filteredProducts.length} product
           {filteredProducts.length !== 1 ? 's' : ''} found
         </p>
@@ -141,9 +142,7 @@ function ProductsPageContent() {
         <div className="hidden lg:block w-60 shrink-0">
           <div className="sticky top-24 space-y-6">
             <div>
-              <h3 className="text-sm font-semibold text-charcoal mb-3 uppercase tracking-wider">
-                Category
-              </h3>
+              <h3 className="text-overline mb-3">Category</h3>
               <div className="space-y-1.5">
                 <button
                   onClick={() => setSelectedCategory('')}
@@ -172,9 +171,7 @@ function ProductsPageContent() {
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-charcoal mb-3 uppercase tracking-wider">
-                Ply
-              </h3>
+              <h3 className="text-overline mb-3">Ply</h3>
               <div className="space-y-1.5">
                 <button
                   onClick={() => setSelectedPly('')}
@@ -259,17 +256,15 @@ function ProductsPageContent() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-lg font-medium text-charcoal mb-2">
-                No products found
-              </p>
-              <p className="text-text-secondary mb-4">
-                Try adjusting your filters or search.
-              </p>
-              <button onClick={clearFilters} className="btn-outline">
-                Clear Filters
-              </button>
-            </div>
+            <EmptyState
+              icon="Package"
+              title="No products found"
+              description="Try adjusting your filters or search."
+              actions={[
+                { label: 'Clear Filters', href: '/products' },
+                { label: 'Try Box Finder', href: '/#box-finder' },
+              ]}
+            />
           )}
         </div>
       </div>
@@ -282,7 +277,7 @@ function ProductsPageContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-50"
+              className="fixed inset-0 bg-black/40 z-[var(--z-overlay)]"
               onClick={() => setFiltersOpen(false)}
             />
             <motion.div
@@ -290,7 +285,7 @@ function ProductsPageContent() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 bg-white z-[51] rounded-t-2xl max-h-[75vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 bg-white z-[calc(var(--z-overlay)+1)] rounded-t-2xl max-h-[75vh] overflow-y-auto"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -398,8 +393,24 @@ export default function ProductsPage() {
   return (
     <Suspense
       fallback={
-        <div className="container-bk section-padding text-center">
-          <p className="text-text-secondary">Loading products...</p>
+        <div className="container-bk section-padding">
+          <Skeleton
+            variant="text"
+            width="200px"
+            height="36px"
+            className="mb-2"
+          />
+          <Skeleton
+            variant="text"
+            width="120px"
+            height="20px"
+            className="mb-8"
+          />
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} variant="card" height="320px" />
+            ))}
+          </div>
         </div>
       }
     >

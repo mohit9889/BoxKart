@@ -3,10 +3,33 @@
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
+import {
+  fadeUp,
+  staggerContainer,
+  staggerChild,
+  hoverTap,
+  duration,
+} from '@/lib/motion';
+
+const SHIPPING_CATEGORIES = [
+  { label: 'Clothing', icon: 'Shirt' },
+  { label: 'Cosmetics', icon: 'Droplets' },
+  { label: 'Electronics', icon: 'Smartphone' },
+  { label: 'Books', icon: 'BookOpen' },
+  { label: 'Shoes', icon: 'Footprints' },
+  { label: 'Food', icon: 'UtensilsCrossed' },
+  { label: 'Other', icon: 'MoreHorizontal' },
+];
+
+const STATS = [
+  { label: 'Products', value: '20+ SKUs' },
+  { label: 'Min. Order', value: '100 pcs' },
+  { label: 'Delivery', value: '3–5 days' },
+];
 
 /**
- * Hero section with headline, CTAs, and CSS-rendered box composition
- * with floating dimension labels.
+ * Hero section with headline, CTAs, use-case chips,
+ * quick stats, and CSS-rendered box composition.
  */
 export default function Hero() {
   return (
@@ -15,36 +38,40 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Text Content */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
           >
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              variants={staggerChild}
               className="inline-flex items-center gap-2 px-3 py-1.5 bg-kraft-muted rounded-full text-sm font-medium text-kraft mb-6"
             >
               <Icon name="Package" size={14} />
               Launching for e-commerce sellers in North India
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight text-charcoal mb-6">
+            <motion.h1
+              variants={staggerChild}
+              className="heading-1 md:heading-display mb-6"
+            >
               The right packaging
               <br />
               <span className="text-kraft">for every shipment.</span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-lg text-text-secondary max-w-lg mb-8 leading-relaxed">
+            <motion.p
+              variants={staggerChild}
+              className="text-body-lg max-w-lg mb-8"
+            >
               Find the right box, mailer or packaging supply for your business.
               Buy from as little as 100 pieces with transparent bulk pricing.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-wrap gap-3">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+            <motion.div
+              variants={staggerChild}
+              className="flex flex-wrap gap-3"
+            >
+              <motion.div {...hoverTap}>
                 <Link
                   href="#box-finder"
                   className="btn-accent text-base px-6 py-3.5"
@@ -53,10 +80,7 @@ export default function Hero() {
                   <Icon name="ArrowRight" size={18} />
                 </Link>
               </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <motion.div {...hoverTap}>
                 <Link
                   href="/products"
                   className="btn-outline text-base px-6 py-3.5"
@@ -64,59 +88,37 @@ export default function Hero() {
                   Browse All Boxes
                 </Link>
               </motion.div>
-            </div>
+            </motion.div>
 
             {/* What are you shipping? */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mt-8"
-            >
-              <p className="text-sm font-medium text-text-secondary mb-3">
-                What are you shipping?
-              </p>
+            <motion.div variants={staggerChild} className="mt-8">
+              <p className="text-label mb-3">What are you shipping?</p>
               <div className="flex flex-wrap gap-2">
-                {[
-                  'Clothing',
-                  'Cosmetics',
-                  'Electronics',
-                  'Books',
-                  'Shoes',
-                  'Food',
-                  'Other',
-                ].map((cat) => (
+                {SHIPPING_CATEGORIES.map((cat) => (
                   <a
-                    key={cat}
+                    key={cat.label}
                     href="#box-finder"
-                    className="px-3 py-1.5 bg-warm-gray hover:bg-kraft-muted rounded-full text-xs font-medium text-text-secondary hover:text-charcoal transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-gray hover:bg-kraft-muted rounded-full text-xs font-medium text-text-secondary hover:text-charcoal transition-colors"
                   >
-                    {cat}
+                    <Icon name={cat.icon} size={12} />
+                    {cat.label}
                   </a>
                 ))}
               </div>
             </motion.div>
 
             {/* Quick Stats */}
-            <div className="flex gap-8 mt-10 pt-8 border-t border-border">
-              {[
-                { label: 'Products', value: '20+ SKUs' },
-                { label: 'Min. Order', value: '100 pcs' },
-                { label: 'Delivery', value: '3–5 days' },
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + i * 0.1 }}
-                >
-                  <p className="text-2xl font-bold text-charcoal">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-text-secondary">{stat.label}</p>
-                </motion.div>
+            <motion.div
+              variants={staggerChild}
+              className="flex gap-8 mt-10 pt-8 border-t border-border"
+            >
+              {STATS.map((stat) => (
+                <div key={stat.label}>
+                  <p className="heading-3">{stat.value}</p>
+                  <p className="text-body-sm">{stat.label}</p>
+                </div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Visual: CSS Box Composition */}
@@ -134,7 +136,7 @@ export default function Hero() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
+                transition={{ delay: 0.4, duration: duration.slow }}
                 className="absolute bottom-16 left-12 w-44 h-36"
               >
                 <div className="w-full h-full bg-gradient-to-br from-[#d4a855] to-[#b8860b] rounded-lg shadow-lg border border-[#c49530]/50 relative">
@@ -155,7 +157,7 @@ export default function Hero() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
+                transition={{ delay: 0.5, duration: duration.slow }}
                 className="absolute bottom-28 right-16 w-32 h-28"
               >
                 <div className="w-full h-full bg-gradient-to-br from-[#c9993d] to-[#a37209] rounded-lg shadow-lg border border-[#b58a20]/50 relative">
@@ -176,7 +178,7 @@ export default function Hero() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ delay: 0.6, duration: duration.slow }}
                 className="absolute top-20 right-24 w-24 h-20"
               >
                 <div className="w-full h-full bg-gradient-to-br from-[#dbb460] to-[#b8860b] rounded-md shadow-md border border-[#c49530]/50 relative">
@@ -196,7 +198,7 @@ export default function Hero() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
+                transition={{ delay: 0.7, duration: duration.slow }}
                 className="absolute top-32 left-8 w-28 h-8"
               >
                 <div className="w-full h-full bg-gradient-to-r from-gray-300 to-gray-400 rounded-md shadow-sm border border-gray-300/50 relative flex items-center justify-center">
@@ -210,7 +212,7 @@ export default function Hero() {
               <motion.div
                 initial={{ opacity: 0, rotate: -10 }}
                 animate={{ opacity: 1, rotate: 0 }}
-                transition={{ delay: 0.8, duration: 0.4 }}
+                transition={{ delay: 0.8, duration: duration.normal }}
                 className="absolute bottom-8 right-8 w-14 h-14"
               >
                 <div className="w-full h-full rounded-full bg-gradient-to-br from-[#f5deb3] to-[#d4a843] shadow-md border-4 border-[#c49530] relative">
@@ -222,7 +224,7 @@ export default function Hero() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 0.4 }}
+                transition={{ delay: 0.9, duration: duration.normal }}
                 className="absolute top-8 left-24"
               >
                 <div className="grid grid-cols-4 gap-0.5 opacity-40">

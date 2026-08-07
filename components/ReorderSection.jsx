@@ -1,10 +1,14 @@
 'use client';
 
 import { motion } from 'motion/react';
+import Link from 'next/link';
 import Icon from '@/components/Icon';
+import { fadeUp, hoverTap, inViewConfig } from '@/lib/motion';
 
 /**
- * Reorder section — shows mock previous order with one-click reorder.
+ * Reorder section — explains the reorder workflow and its benefits.
+ * Does NOT show fake personal order data to logged-out users.
+ * When authenticated users exist, this section will surface real history.
  */
 export default function ReorderSection() {
   return (
@@ -12,52 +16,63 @@ export default function ReorderSection() {
       <div className="container-bk">
         <div className="max-w-2xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="card-bk p-6 md:p-8"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={inViewConfig}
+            className="card-bk p-6 md:p-8 text-center"
           >
-            <div className="flex items-center gap-2 mb-4">
-              <Icon name="Clock" size={18} className="text-kraft" />
-              <h2 className="text-xl font-bold text-charcoal">Running low?</h2>
+            <div className="w-14 h-14 bg-kraft-muted rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <Icon name="RefreshCw" size={24} className="text-kraft" />
             </div>
 
-            <p className="text-sm text-text-secondary mb-6">
-              You may be running low based on your previous order.
+            <h2 className="heading-3 mb-3">Reorder in one click</h2>
+            <p className="text-body mb-6 max-w-md mx-auto">
+              Running low? Your order history stays saved so you can repeat any
+              previous order instantly — same packaging, same quantity, same
+              price.
             </p>
 
-            <div className="bg-warm-gray rounded-xl p-5 mb-4">
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
-                  <Icon name="Package" size={24} className="text-kraft" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-charcoal">
-                    10 × 8 × 4&quot; Corrugated Box
+            <div className="grid sm:grid-cols-3 gap-4 mb-8">
+              {[
+                {
+                  icon: 'Clock',
+                  title: 'Order History',
+                  desc: 'All past orders saved',
+                },
+                {
+                  icon: 'MousePointerClick',
+                  title: 'One-Click Reorder',
+                  desc: 'Repeat any past order',
+                },
+                {
+                  icon: 'Zap',
+                  title: 'Same Pricing',
+                  desc: 'Locked-in bulk rates',
+                },
+              ].map((item) => (
+                <div key={item.title} className="p-4">
+                  <Icon
+                    name={item.icon}
+                    size={22}
+                    className="text-kraft mx-auto mb-2"
+                  />
+                  <p className="text-sm font-semibold text-charcoal">
+                    {item.title}
                   </p>
-                  <p className="text-sm text-text-secondary mt-0.5">
-                    1,000 pieces · 3-Ply · Brown Kraft
-                  </p>
-                  <p className="text-xs text-text-tertiary mt-1 flex items-center gap-1">
-                    <Icon name="Clock" size={12} />
-                    Ordered 24 days ago
+                  <p className="text-xs text-text-secondary mt-1">
+                    {item.desc}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-charcoal">₹9,200</p>
-                  <p className="text-xs text-text-tertiary">₹9.20/pc</p>
-                </div>
-              </div>
+              ))}
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-accent w-full flex items-center justify-center gap-2"
-            >
-              <Icon name="RefreshCw" size={16} />
-              Reorder 1,000 pieces
-            </motion.button>
+            <motion.div {...hoverTap}>
+              <Link href="/products" className="btn-accent">
+                Start Your First Order
+                <Icon name="ArrowRight" size={16} />
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </div>

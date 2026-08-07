@@ -11,28 +11,27 @@ const PRODUCT_LINKS = [
 ];
 
 const COMPANY_LINKS = [
-  { label: 'About Us', href: '#' },
-  { label: 'How It Works', href: '/#how-it-works' },
-  { label: 'Bulk Orders', href: '/#bundles' },
+  { label: 'About Us', href: '/about' },
+  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Bulk Orders', href: '/bulk-orders' },
   { label: 'Custom Packaging', href: '/#custom-packaging' },
-  { label: 'Blog', href: '#' },
-  { label: 'Careers', href: '#' },
 ];
 
 const SUPPORT_LINKS = [
-  { label: 'Help Centre', href: '#' },
-  { label: 'Shipping Policy', href: '#' },
-  { label: 'Returns & Refunds', href: '#' },
-  { label: 'Terms of Service', href: '#' },
-  { label: 'Privacy Policy', href: '#' },
+  { label: 'Help Centre', href: '/help' },
+  { label: 'Shipping Policy', href: '/shipping-policy' },
+  { label: 'Returns & Refunds', href: '/returns-refunds' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Privacy Policy', href: '/privacy' },
 ];
 
 /**
  * Site footer with navigation links and contact information.
+ * All links point to real routes (no placeholder #).
  */
 export default function Footer() {
   return (
-    <footer className="bg-charcoal text-white">
+    <footer className="bg-charcoal text-white" role="contentinfo">
       <div className="container-bk py-16">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
@@ -73,9 +72,7 @@ export default function Footer() {
 
           {/* Products */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/40 mb-4">
-              Products
-            </h3>
+            <h3 className="text-overline text-white/40 mb-4">Products</h3>
             <ul className="space-y-2.5">
               {PRODUCT_LINKS.map((link) => (
                 <li key={link.label}>
@@ -92,9 +89,7 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/40 mb-4">
-              Company
-            </h3>
+            <h3 className="text-overline text-white/40 mb-4">Company</h3>
             <ul className="space-y-2.5">
               {COMPANY_LINKS.map((link) => (
                 <li key={link.label}>
@@ -111,9 +106,7 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/40 mb-4">
-              Support
-            </h3>
+            <h3 className="text-overline text-white/40 mb-4">Support</h3>
             <ul className="space-y-2.5">
               {SUPPORT_LINKS.map((link) => (
                 <li key={link.label}>
@@ -132,7 +125,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/40">
-            © {new Date().getFullYear()} BoxKart. All rights reserved.
+            © 2025 BoxKart. All rights reserved.
           </p>
           <p className="text-xs text-white/40">
             Made with ❤️ in India for Indian e-commerce sellers

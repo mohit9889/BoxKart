@@ -2,41 +2,50 @@
 
 import { motion } from 'motion/react';
 import Icon from '@/components/Icon';
+import { staggerContainer, staggerChild, inViewConfig } from '@/lib/motion';
 
 const INDICATORS = [
   {
     icon: 'ShieldCheck',
     label: 'Transparent Pricing',
-    detail: 'See exactly what you pay',
+    detail: 'See exactly what you pay — no hidden fees',
   },
   {
     icon: 'Truck',
     label: 'Fast Delivery',
-    detail: 'Shipping across North India',
+    detail: 'Shipping across North India in 3–5 days',
   },
-  { icon: 'Zap', label: 'Low MOQ', detail: 'Order from just 100 pieces' },
   {
-    icon: 'Award',
-    label: 'Early Access',
-    detail: 'Join our seller community',
+    icon: 'Zap',
+    label: 'Low MOQ',
+    detail: 'Order from just 100 pieces',
+  },
+  {
+    icon: 'Package',
+    label: 'Right-Size Packaging',
+    detail: 'Don\u2019t overpay for oversized boxes',
   },
 ];
 
 /**
- * Trust indicators bar below the hero section.
+ * Trust indicators bar — uses truthful value propositions only.
+ * No fake metrics, ratings, or unverifiable claims.
  */
 export default function TrustIndicators() {
   return (
     <section className="bg-white border-y border-border">
       <div className="container-bk py-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {INDICATORS.map((item, i) => (
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={inViewConfig}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6"
+        >
+          {INDICATORS.map((item) => (
             <motion.div
               key={item.label}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+              variants={staggerChild}
               className="flex items-center gap-3"
             >
               <div className="w-10 h-10 rounded-xl bg-accent-light flex items-center justify-center shrink-0">
@@ -50,7 +59,7 @@ export default function TrustIndicators() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
