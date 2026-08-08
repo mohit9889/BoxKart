@@ -3,11 +3,13 @@
 import { useState, use } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { products, getPriceForQuantity } from '@/data/products';
 import { useCart } from '@/lib/cart';
 import { getUpsellPrompt } from '@/lib/pricing';
 import BoxBlueprint from '@/components/BoxBlueprint';
 import PincodeChecker from '@/components/PincodeChecker';
+import { ErrorState } from '@/components/ui';
 import Icon from '@/components/Icon';
 
 /**
@@ -15,6 +17,7 @@ import Icon from '@/components/Icon';
  * quantity selector, and sticky mobile CTA.
  */
 export default function ProductDetailPage({ params }) {
+  const router = useRouter();
   const resolvedParams = use(params);
   const product = products.find((p) => p.slug === resolvedParams.slug);
   const { addItem } = useCart();
@@ -26,14 +29,14 @@ export default function ProductDetailPage({ params }) {
 
   if (!product) {
     return (
-      <div className="container-bk section-padding text-center">
-        <h1 className="text-2xl font-bold text-charcoal mb-4">
-          Product not found
-        </h1>
-        <Link href="/products" className="btn-primary">
-          Browse Products
-        </Link>
-      </div>
+      <ErrorState
+        title="Product not found"
+        message="This packaging product doesn't exist or may have been removed."
+        retry={{
+          label: 'Browse Products',
+          action: () => router.push('/products'),
+        }}
+      />
     );
   }
 
@@ -59,7 +62,10 @@ export default function ProductDetailPage({ params }) {
     <>
       <div className="container-bk section-padding pb-32 md:pb-16">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-text-secondary mb-8">
+        <nav
+          className="flex items-center gap-2 text-sm text-text-secondary mb-8"
+          aria-label="Breadcrumb"
+        >
           <Link href="/" className="hover:text-charcoal transition-colors">
             Home
           </Link>
@@ -71,7 +77,9 @@ export default function ProductDetailPage({ params }) {
             Products
           </Link>
           <Icon name="ChevronRight" size={14} />
-          <span className="text-charcoal font-medium">{product.name}</span>
+          <span className="text-charcoal font-medium" aria-current="page">
+            {product.name}
+          </span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
@@ -101,9 +109,7 @@ export default function ProductDetailPage({ params }) {
               <span className="badge badge-accent">{product.stockStatus}</span>
             </div>
 
-            <h1 className="text-2xl md:text-3xl font-bold text-charcoal mb-2">
-              {product.name}
-            </h1>
+            <h1 className="heading-2 mb-2">{product.name}</h1>
             <p className="text-text-secondary mb-1">{product.dimensions}</p>
             <p className="text-text-secondary text-sm mb-6">
               {product.color} · {product.material}
@@ -274,9 +280,7 @@ export default function ProductDetailPage({ params }) {
 
             {/* Specs */}
             <div className="border-t border-border pt-6 mt-6">
-              <h3 className="text-sm font-semibold text-charcoal mb-4 uppercase tracking-wider">
-                Specifications
-              </h3>
+              <h3 className="text-overline mb-4">Specifications</h3>
               <div className="grid grid-cols-2 gap-3">
                 {specs.map((spec) => (
                   <div key={spec.label} className="flex items-start gap-2.5">
@@ -301,9 +305,7 @@ export default function ProductDetailPage({ params }) {
               <div className="border-t border-border pt-6 mt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Icon name="Info" size={16} className="text-info" />
-                  <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider">
-                    What is {product.ply}?
-                  </h3>
+                  <h3 className="text-overline">What is {product.ply}?</h3>
                 </div>
                 <p className="text-sm text-text-secondary leading-relaxed">
                   {product.ply === '3-Ply'
@@ -322,9 +324,7 @@ export default function ProductDetailPage({ params }) {
                     size={16}
                     className="text-warning"
                   />
-                  <h3 className="text-sm font-semibold text-charcoal uppercase tracking-wider">
-                    Not Recommended For
-                  </h3>
+                  <h3 className="text-overline">Not Recommended For</h3>
                 </div>
                 <ul className="space-y-1.5">
                   {product.notRecommendedFor.map((item) => (
@@ -342,9 +342,7 @@ export default function ProductDetailPage({ params }) {
 
             {/* Description */}
             <div className="border-t border-border pt-6 mt-6">
-              <h3 className="text-sm font-semibold text-charcoal mb-2 uppercase tracking-wider">
-                Description
-              </h3>
+              <h3 className="text-overline mb-2">Description</h3>
               <p className="text-sm text-text-secondary leading-relaxed">
                 {product.description}
               </p>
@@ -364,14 +362,14 @@ export default function ProductDetailPage({ params }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-50"
+              className="fixed inset-0 bg-black/50 z-[var(--z-overlay)]"
               onClick={() => setShowBulkQuote(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 z-[51] w-[90vw] max-w-md shadow-xl"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 z-[calc(var(--z-overlay)+1)] w-[90vw] max-w-md shadow-xl"
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-charcoal">
@@ -445,7 +443,7 @@ export default function ProductDetailPage({ params }) {
       </AnimatePresence>
 
       {/* Mobile Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 z-40 md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 z-[var(--z-sticky)] md:hidden">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-sm text-text-secondary">

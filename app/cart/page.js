@@ -3,14 +3,24 @@
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
+import { EmptyState } from '@/components/ui';
 import Icon from '@/components/Icon';
 
 /**
  * Full cart page with detailed item list, pricing, and checkout CTA.
  */
 export default function CartPage() {
-  const { items, removeItem, updateCount, totalItems, totalPrice, clearCart } =
-    useCart();
+  const {
+    items,
+    removeItem,
+    updateCount,
+    totalItems,
+    subtotal,
+    shipping,
+    gst,
+    totalPrice,
+    clearCart,
+  } = useCart();
 
   const formatPrice = (num) =>
     new Intl.NumberFormat('en-IN', {
@@ -22,28 +32,21 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container-bk section-padding text-center">
-        <Icon
-          name="ShoppingBag"
-          size={64}
-          className="text-border mx-auto mb-6"
-        />
-        <h1 className="text-2xl font-bold text-charcoal mb-2">
-          Your cart is empty
-        </h1>
-        <p className="text-text-secondary mb-6">
-          Add packaging products to get started with your order.
-        </p>
-        <Link href="/products" className="btn-primary">
-          Browse Products
-        </Link>
-      </div>
+      <EmptyState
+        icon="ShoppingBag"
+        title="Your cart is empty"
+        description="Add packaging products to get started with your order."
+        actions={[
+          { label: 'Browse Products', href: '/products' },
+          { label: 'Find My Box', href: '/#box-finder' },
+        ]}
+      />
     );
   }
 
   return (
     <div className="container-bk section-padding">
-      <h1 className="text-3xl font-bold text-charcoal mb-8">Your Cart</h1>
+      <h1 className="heading-1 mb-8">Your Cart</h1>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Cart Items */}
@@ -174,20 +177,37 @@ export default function CartPage() {
                   Items ({totalItems})
                 </span>
                 <span className="font-medium text-charcoal">
-                  {formatPrice(totalPrice)}
+                  {formatPrice(subtotal)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Delivery</span>
-                <span className="text-text-tertiary">
-                  Calculated at checkout
+                <span className="text-text-secondary">Shipping</span>
+                {shipping === 0 ? (
+                  <span className="text-accent font-medium">Free</span>
+                ) : (
+                  <span className="font-medium text-charcoal">
+                    {formatPrice(shipping)}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-text-secondary">GST (18%)</span>
+                <span className="font-medium text-charcoal">
+                  {formatPrice(gst)}
                 </span>
               </div>
             </div>
 
+            {shipping > 0 && (
+              <p className="text-xs text-accent mb-4 flex items-center gap-1">
+                <Icon name="Truck" size={12} />
+                Free shipping on orders above ₹5,000
+              </p>
+            )}
+
             <div className="border-t border-border pt-4 mb-6">
               <div className="flex justify-between">
-                <span className="font-medium text-charcoal">Subtotal</span>
+                <span className="font-medium text-charcoal">Total</span>
                 <span className="text-xl font-bold text-charcoal">
                   {formatPrice(totalPrice)}
                 </span>

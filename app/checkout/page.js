@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
+import { EmptyState } from '@/components/ui';
 import Icon from '@/components/Icon';
 
 const STEPS = [
@@ -17,7 +18,7 @@ const STEPS = [
  * 4-step checkout flow: Contact → Address → Summary → Payment placeholder.
  */
 export default function CheckoutPage() {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, subtotal, shipping, gst, totalPrice, clearCart } = useCart();
   const [step, setStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -60,22 +61,12 @@ export default function CheckoutPage() {
 
   if (items.length === 0 && !orderPlaced) {
     return (
-      <div className="container-bk section-padding text-center">
-        <Icon
-          name="ShoppingBag"
-          size={64}
-          className="text-border mx-auto mb-6"
-        />
-        <h1 className="text-2xl font-bold text-charcoal mb-2">
-          No items to checkout
-        </h1>
-        <p className="text-text-secondary mb-6">
-          Add products to your cart first.
-        </p>
-        <Link href="/products" className="btn-primary">
-          Browse Products
-        </Link>
-      </div>
+      <EmptyState
+        icon="ShoppingBag"
+        title="No items to checkout"
+        description="Add products to your cart first."
+        actions={[{ label: 'Browse Products', href: '/products' }]}
+      />
     );
   }
 
