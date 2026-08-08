@@ -64,7 +64,7 @@ export default function Testimonials() {
           </div>
 
           <Link
-            href="/#custom-packaging"
+            href="/custom-packaging"
             className="btn-accent inline-flex items-center gap-2"
           >
             Get Started

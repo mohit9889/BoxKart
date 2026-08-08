@@ -374,10 +374,7 @@ export default function BoxFinder() {
                           >
                             Try different dimensions
                           </button>
-                          <Link
-                            href="/#custom-packaging"
-                            className="btn-accent"
-                          >
+                          <Link href="/custom-packaging" className="btn-accent">
                             Custom Quote
                           </Link>
                         </div>

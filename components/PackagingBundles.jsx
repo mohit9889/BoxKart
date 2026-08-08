@@ -124,7 +124,7 @@ export default function PackagingBundles() {
                     </motion.button>
                   ) : (
                     <Link
-                      href="#custom-packaging"
+                      href="/custom-packaging"
                       className="btn-outline w-full text-center flex items-center justify-center gap-2"
                     >
                       <Icon name="MessageSquare" size={16} />

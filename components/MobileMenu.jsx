@@ -14,7 +14,7 @@ const MOBILE_NAV_LINKS = [
     icon: 'Package',
   },
   { label: 'Packaging Supplies', href: '/products', icon: 'ShoppingBag' },
-  { label: 'Custom Packaging', href: '/#custom-packaging', icon: 'Scissors' },
+  { label: 'Custom Packaging', href: '/custom-packaging', icon: 'Scissors' },
   { label: 'Bulk Orders', href: '/#bundles', icon: 'Layers' },
   { label: 'How It Works', href: '/#how-it-works', icon: 'Info' },
   { label: 'Box Finder', href: '/#box-finder', icon: 'Search' },

@@ -18,7 +18,7 @@ const NAV_LINKS = [
     match: '/products',
   },
   { label: 'Packaging Supplies', href: '/products', match: '/products' },
-  { label: 'Custom Packaging', href: '/#custom-packaging' },
+  { label: 'Custom Packaging', href: '/custom-packaging' },
   { label: 'Bulk Deals', href: '/#bundles' },
   { label: 'How It Works', href: '/#how-it-works' },
 ];

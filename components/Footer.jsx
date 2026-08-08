@@ -14,7 +14,7 @@ const COMPANY_LINKS = [
   { label: 'About Us', href: '/about' },
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'Bulk Orders', href: '/bulk-orders' },
-  { label: 'Custom Packaging', href: '/#custom-packaging' },
+  { label: 'Custom Packaging', href: '/custom-packaging' },
 ];
 
 const SUPPORT_LINKS = [
