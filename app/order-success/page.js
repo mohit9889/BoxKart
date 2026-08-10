@@ -3,7 +3,6 @@
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
-import { useEffect, useState } from 'react';
 
 export default function OrderSuccessPage() {
   return (
