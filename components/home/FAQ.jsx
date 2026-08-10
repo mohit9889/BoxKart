@@ -38,7 +38,7 @@ const FAQS = [
 /**
  * FAQ accordion section with AnimatePresence for smooth expand/collapse.
  */
-export default function FAQ() {
+export default function FAQ({ hideTitle = false }) {
   const [openIdx, setOpenIdx] = useState(null);
 
   const toggle = (idx) => {
@@ -46,19 +46,21 @@ export default function FAQ() {
   };
 
   return (
-    <section className="section-padding">
+    <section className={hideTitle ? '' : 'section-padding'}>
       <div className="container-bk max-w-3xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-10"
-        >
-          <h2 className="heading-2 mb-3">Frequently Asked Questions</h2>
-          <p className="text-body-lg">
-            Everything you need to know about ordering packaging.
-          </p>
-        </motion.div>
+        {!hideTitle && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <h2 className="heading-2 mb-3">Frequently Asked Questions</h2>
+            <p className="text-body-lg">
+              Everything you need to know about ordering packaging.
+            </p>
+          </motion.div>
+        )}
 
         <div className="space-y-3">
           {FAQS.map((faq, i) => (

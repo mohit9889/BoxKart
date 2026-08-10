@@ -65,6 +65,7 @@ import {
   ZapIcon,
   ChartDecreaseIcon,
   Call02Icon,
+  Leaf02Icon,
 } from '@hugeicons/core-free-icons';
 
 /**
@@ -109,8 +110,10 @@ const ICON_MAP = {
   MousePointerClick: Cursor01Icon,
   Package: Package01Icon,
   PackageMinus: Package01Icon,
+  PackageCheck: Shield02Icon,
   Palette: PaintBoardIcon,
   Phone: Call02Icon,
+  Leaf: Leaf02Icon,
   Plus: PlusSignIcon,
   Printer: PrinterIcon,
   RefreshCw: Refresh01Icon,

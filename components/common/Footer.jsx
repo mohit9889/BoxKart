@@ -12,15 +12,15 @@ const PRODUCT_LINKS = [
 
 const COMPANY_LINKS = [
   { label: 'About Us', href: '/about' },
-  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Contact Us', href: '/contact' },
   { label: 'Bulk Orders', href: '/bulk-orders' },
   { label: 'Custom Packaging', href: '/custom-packaging' },
 ];
 
 const SUPPORT_LINKS = [
-  { label: 'Help Centre', href: '/help' },
+  { label: 'Help Centre / FAQ', href: '/faq' },
   { label: 'Shipping Policy', href: '/shipping-policy' },
-  { label: 'Returns & Refunds', href: '/returns-refunds' },
+  { label: 'Returns & Refunds', href: '/refund-policy' },
   { label: 'Terms of Service', href: '/terms' },
   { label: 'Privacy Policy', href: '/privacy' },
 ];
