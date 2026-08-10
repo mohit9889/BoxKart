@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart';
 import { duration } from '@/lib/motion';
 import SearchBar from '@/components/common/SearchBar';
 import MobileMenu from '@/components/common/MobileMenu';
 import CartDrawer from '@/components/common/CartDrawer';
 import Icon from '@/components/common/Icon';
+import { authService } from '@/services/auth.service';
 
 const NAV_LINKS = [
   {
@@ -33,8 +34,27 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { totalItems } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await authService.logout();
+    window.dispatchEvent(new Event('storage'));
+    router.push('/');
+  };
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
+    };
+    checkAuth();
+
+    // Listen for cross-tab or manual dispatch events
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -125,16 +145,48 @@ export default function Header() {
             </button>
 
             {/* Account */}
-            <Link
-              href="/account"
-              className={`hidden sm:flex p-2.5 rounded-full hover:bg-warm-gray transition-colors ${
-                pathname === '/account' ? 'bg-warm-gray' : ''
-              }`}
-              aria-label="My account"
-              aria-current={pathname === '/account' ? 'page' : undefined}
-            >
-              <Icon name="User" size={20} className="text-text-secondary" />
-            </Link>
+            <div className="relative group hidden sm:block">
+              <Link
+                href={isAuthenticated ? '/account' : '/login'}
+                className={`flex p-2.5 rounded-full hover:bg-warm-gray transition-colors ${
+                  pathname === '/account' || pathname === '/login'
+                    ? 'bg-warm-gray'
+                    : ''
+                }`}
+                aria-label="My account"
+                aria-current={
+                  pathname === '/account' || pathname === '/login'
+                    ? 'page'
+                    : undefined
+                }
+              >
+                <Icon name="User" size={20} className="text-text-secondary" />
+              </Link>
+
+              {isAuthenticated && (
+                <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="w-48 bg-white rounded-xl shadow-lg border border-[#e8e4de] py-1 flex flex-col overflow-hidden">
+                    <Link
+                      href="/account"
+                      className="px-4 py-2.5 text-sm font-medium text-[var(--color-charcoal)] hover:bg-[#faf8f5] transition-colors flex items-center gap-2"
+                    >
+                      <Icon
+                        name="User"
+                        size={16}
+                        className="text-[var(--color-text-secondary)]"
+                      />{' '}
+                      My Account
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="px-4 py-2.5 text-sm font-medium text-[var(--color-danger)] hover:bg-[var(--color-danger-light)] transition-colors flex items-center gap-2 text-left w-full border-t border-[#e8e4de]"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Cart */}
             <button
