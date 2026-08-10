@@ -24,7 +24,13 @@ const MOBILE_NAV_LINKS = [
  * Slide-in mobile navigation menu with focus trap,
  * Escape-to-close, body scroll lock, and focus restoration.
  */
-export default function MobileMenu({ open, onClose, links }) {
+export default function MobileMenu({
+  open,
+  onClose,
+  links,
+  isAuthenticated,
+  onLogout,
+}) {
   const panelRef = useRef(null);
   const previousFocusRef = useRef(null);
   const pathname = usePathname();
@@ -158,16 +164,35 @@ export default function MobileMenu({ open, onClose, links }) {
                 </motion.div>
               ))}
 
-              {/* Account link for mobile (hidden in header on mobile) */}
+              {/* Account / Auth links for mobile */}
               <div className="border-t border-border mt-2 pt-2">
-                <Link
-                  href="/account"
-                  onClick={onClose}
-                  className="flex items-center gap-3 px-5 py-3.5 text-base font-medium text-text-primary hover:bg-warm-gray transition-colors"
-                >
-                  <Icon name="User" size={18} className="text-text-tertiary" />
-                  My Account
-                </Link>
+                {isAuthenticated ? (
+                  <Link
+                    href="/account"
+                    onClick={onClose}
+                    className="flex items-center gap-3 px-5 py-3.5 text-base font-medium text-text-primary hover:bg-warm-gray transition-colors"
+                  >
+                    <Icon
+                      name="User"
+                      size={18}
+                      className="text-text-tertiary"
+                    />
+                    My Account
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={onClose}
+                    className="flex items-center gap-3 px-5 py-3.5 text-base font-medium text-text-primary hover:bg-warm-gray transition-colors"
+                  >
+                    <Icon
+                      name="User"
+                      size={18}
+                      className="text-text-tertiary"
+                    />
+                    Log in / Sign up
+                  </Link>
+                )}
                 <Link
                   href="/cart"
                   onClick={onClose}
@@ -180,6 +205,22 @@ export default function MobileMenu({ open, onClose, links }) {
                   />
                   Cart
                 </Link>
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      if (onLogout) onLogout();
+                      onClose();
+                    }}
+                    className="w-full flex items-center gap-3 px-5 py-3.5 text-base font-medium text-[var(--color-danger)] hover:bg-[var(--color-danger-light)] transition-colors text-left"
+                  >
+                    <Icon
+                      name="LogOut"
+                      size={18}
+                      className="text-[var(--color-danger)]"
+                    />
+                    Logout
+                  </button>
+                )}
               </div>
             </nav>
 

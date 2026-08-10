@@ -66,6 +66,7 @@ import {
   ChartDecreaseIcon,
   Call02Icon,
   Leaf02Icon,
+  Logout01Icon,
 } from '@hugeicons/core-free-icons';
 
 /**
@@ -101,6 +102,7 @@ const ICON_MAP = {
   LayoutDashboard: LayoutGridIcon,
   Loader2: Loading02Icon,
   Lock: LockIcon,
+  LogOut: Logout01Icon,
   Mail: Mail01Icon,
   MapPin: MapPinIcon,
   Menu: Menu01Icon,

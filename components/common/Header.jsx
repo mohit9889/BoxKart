@@ -98,13 +98,20 @@ export default function Header() {
         animate={{ y: 0 }}
         transition={{ duration: duration.slow, ease: 'easeOut' }}
       >
-        <div className="container-bk flex items-center justify-between gap-4">
+        <div className="container-bk flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-charcoal rounded-lg flex items-center justify-center">
-              <Icon name="Package" size={18} className="text-white" />
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 sm:gap-2 shrink-0"
+          >
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-charcoal rounded-lg flex items-center justify-center">
+              <Icon
+                name="Package"
+                size={16}
+                className="text-white sm:w-[18px] sm:h-[18px]"
+              />
             </div>
-            <span className="text-xl font-bold tracking-tight text-charcoal">
+            <span className="text-lg sm:text-xl font-bold tracking-tight text-charcoal">
               Box<span className="text-kraft">Kart</span>
             </span>
           </Link>
@@ -134,11 +141,11 @@ export default function Header() {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             {/* Search Toggle */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2.5 rounded-full hover:bg-warm-gray transition-colors"
+              className="p-2 sm:p-2.5 rounded-full hover:bg-warm-gray transition-colors"
               aria-label="Search products"
             >
               <Icon name="Search" size={20} className="text-text-secondary" />
@@ -191,7 +198,7 @@ export default function Header() {
             {/* Cart */}
             <button
               onClick={() => setCartOpen(true)}
-              className="relative p-2.5 rounded-full hover:bg-warm-gray transition-colors"
+              className="relative p-2 sm:p-2.5 rounded-full hover:bg-warm-gray transition-colors"
               aria-label={`Cart${totalItems > 0 ? ` (${totalItems} item${totalItems === 1 ? '' : 's'})` : ' (empty)'}`}
             >
               <Icon
@@ -225,7 +232,7 @@ export default function Header() {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2.5 rounded-full hover:bg-warm-gray transition-colors ml-1"
+              className="lg:hidden p-2 sm:p-2.5 rounded-full hover:bg-warm-gray transition-colors ml-0.5 sm:ml-1"
               aria-label="Open menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -241,6 +248,8 @@ export default function Header() {
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         links={NAV_LINKS}
+        isAuthenticated={isAuthenticated}
+        onLogout={handleLogout}
       />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
