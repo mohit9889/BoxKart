@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Indian pincode input with validation and delivery check.

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Search input with debounced query, clear button, and loading indicator.

@@ -1,6 +1,6 @@
 'use client';
 
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Number input with +/- stepper buttons, min/max, and step validation.

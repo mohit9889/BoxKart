@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { bundles } from '@/data/bundles';
 import { useCart } from '@/lib/cart';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Packaging bundles section with 3 bundle cards.

@@ -1,6 +1,6 @@
 'use client';
 
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Circular icon button with consistent sizing and accessible label.

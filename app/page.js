@@ -1,18 +1,18 @@
-import Hero from '@/components/Hero';
-import TrustIndicators from '@/components/TrustIndicators';
-import BoxFinder from '@/components/BoxFinder';
-import CategorySection from '@/components/CategorySection';
-import PopularBoxes from '@/components/PopularBoxes';
-import ShopBySize from '@/components/ShopBySize';
-import BulkPricing from '@/components/BulkPricing';
-import WhyBoxKart from '@/components/WhyBoxKart';
-import CustomPackaging from '@/components/CustomPackaging';
-import PackagingBundles from '@/components/PackagingBundles';
-import HowItWorks from '@/components/HowItWorks';
-import ReorderSection from '@/components/ReorderSection';
-import Testimonials from '@/components/Testimonials';
-import FAQ from '@/components/FAQ';
-import FinalCTA from '@/components/FinalCTA';
+import Hero from '@/components/home/Hero';
+import TrustIndicators from '@/components/home/TrustIndicators';
+import BoxFinder from '@/components/product/BoxFinder';
+import CategorySection from '@/components/home/CategorySection';
+import PopularBoxes from '@/components/home/PopularBoxes';
+import ShopBySize from '@/components/product/ShopBySize';
+import BulkPricing from '@/components/product/BulkPricing';
+import WhyBoxKart from '@/components/home/WhyBoxKart';
+import CustomPackaging from '@/components/custom-packaging/CustomPackaging';
+import PackagingBundles from '@/components/product/PackagingBundles';
+import HowItWorks from '@/components/home/HowItWorks';
+import ReorderSection from '@/components/account/ReorderSection';
+import Testimonials from '@/components/home/Testimonials';
+import FAQ from '@/components/home/FAQ';
+import FinalCTA from '@/components/home/FinalCTA';
 
 /**
  * BoxKart Homepage — assembles all 14 sections in order.

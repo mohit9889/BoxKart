@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { backdrop, modal as modalVariants } from '@/lib/motion';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Accessible modal dialog with focus trap, Escape-to-close,

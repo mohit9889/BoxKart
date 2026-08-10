@@ -1,6 +1,6 @@
 'use client';
 
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Dimension input group for Length × Width × Height with unit selector.

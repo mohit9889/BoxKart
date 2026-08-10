@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Flat 2D die-cut blueprint showing cut lines, fold lines, and glue tabs

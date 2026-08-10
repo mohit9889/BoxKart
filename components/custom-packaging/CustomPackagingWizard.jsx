@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 import {
   Input,
   Select,
@@ -1142,7 +1142,6 @@ function formatBytes(bytes) {
 
 /** Renders a blob-URL logo thumbnail. Uses <img> because next/image doesn't support blob URLs. */
 function LogoThumbnail({ src }) {
-  // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
       src={src}

@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
 import { EmptyState } from '@/components/ui';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Full cart page with detailed item list, pricing, and checkout CTA.

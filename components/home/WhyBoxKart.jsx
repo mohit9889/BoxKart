@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 const FEATURES = [
   {

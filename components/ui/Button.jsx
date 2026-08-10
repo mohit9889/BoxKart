@@ -1,6 +1,6 @@
 'use client';
 
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Reusable Button component with variant, size, loading, and disabled support.

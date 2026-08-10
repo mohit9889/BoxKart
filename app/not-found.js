@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Custom 404 page — polished, on-brand experience.

@@ -2,8 +2,8 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
-import CustomPackagingWizard from '@/components/CustomPackagingWizard';
+import Icon from '@/components/common/Icon';
+import CustomPackagingWizard from '@/components/custom-packaging/CustomPackagingWizard';
 import {
   fadeUp,
   staggerContainer,

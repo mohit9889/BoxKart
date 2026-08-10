@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 import { staggerChild, hoverTap, duration } from '@/lib/motion';
 
 /* ── Product Image ── */

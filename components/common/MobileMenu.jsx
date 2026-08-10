@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { backdrop, slideInRight, duration } from '@/lib/motion';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 const MOBILE_NAV_LINKS = [
   {

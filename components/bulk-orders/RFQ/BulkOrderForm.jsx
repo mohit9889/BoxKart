@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 import {
   Input,
   Select,

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { backdrop, slideInRight } from '@/lib/motion';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Accessible slide-in drawer with focus trap, Escape-to-close,

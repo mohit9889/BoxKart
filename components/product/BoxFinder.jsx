@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { products, getPriceForQuantity } from '@/data/products';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 const CATEGORIES = [
   { id: 'clothing', label: 'Clothing', icon: 'Shirt' },

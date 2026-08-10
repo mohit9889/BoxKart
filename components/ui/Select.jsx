@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef } from 'react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Select dropdown with label, error, helper text, and all states.

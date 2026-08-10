@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },

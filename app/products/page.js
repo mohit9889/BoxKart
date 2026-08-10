@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { products } from '@/data/products';
 import { categories } from '@/data/categories';
-import ProductCard from '@/components/ProductCard';
+import ProductCard from '@/components/product/ProductCard';
 import { EmptyState, Skeleton } from '@/components/ui';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 const PLY_OPTIONS = ['3-Ply', '5-Ply', 'N/A'];
 const SORT_OPTIONS = [

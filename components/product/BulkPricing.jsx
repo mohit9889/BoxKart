@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 const EXAMPLE = {
   name: '10 × 8 × 4" Corrugated Box',

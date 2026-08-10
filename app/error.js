@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Global error boundary — catches unhandled errors at the route level.

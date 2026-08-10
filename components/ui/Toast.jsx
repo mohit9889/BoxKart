@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Toast notification system.

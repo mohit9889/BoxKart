@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { calculateShipping } from '@/lib/delivery';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Pincode checker component — shows estimated delivery time

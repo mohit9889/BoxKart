@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { categories } from '@/data/categories';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Category browsing section with large visual cards.

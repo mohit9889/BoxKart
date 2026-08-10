@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'motion/react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Quantity selector with +/- buttons, direct input, MOQ/max validation,

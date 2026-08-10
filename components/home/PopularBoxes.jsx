@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'motion/react';
-import ProductCard from './ProductCard';
+import ProductCard from '@/components/product/ProductCard';
 import { getPopularProducts } from '@/data/products';
 import Link from 'next/link';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Popular products grid section on the homepage.

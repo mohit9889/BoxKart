@@ -1,4 +1,4 @@
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Alert banner for informational, success, warning, or error messages.

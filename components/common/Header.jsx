@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/lib/cart';
 import { duration } from '@/lib/motion';
-import SearchBar from './SearchBar';
-import MobileMenu from './MobileMenu';
-import CartDrawer from './CartDrawer';
-import Icon from '@/components/Icon';
+import SearchBar from '@/components/common/SearchBar';
+import MobileMenu from '@/components/common/MobileMenu';
+import CartDrawer from '@/components/common/CartDrawer';
+import Icon from '@/components/common/Icon';
 
 const NAV_LINKS = [
   {

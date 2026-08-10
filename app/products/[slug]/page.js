@@ -7,10 +7,10 @@ import { useRouter } from 'next/navigation';
 import { products, getPriceForQuantity } from '@/data/products';
 import { useCart } from '@/lib/cart';
 import { getUpsellPrompt } from '@/lib/pricing';
-import BoxBlueprint from '@/components/BoxBlueprint';
-import PincodeChecker from '@/components/PincodeChecker';
+import BoxBlueprint from '@/components/product/BoxBlueprint';
+import PincodeChecker from '@/components/product/PincodeChecker';
 import { ErrorState } from '@/components/ui';
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Product detail page — shows full product info, pricing tiers,

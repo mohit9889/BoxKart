@@ -1,4 +1,4 @@
-import Icon from '@/components/Icon';
+import Icon from '@/components/common/Icon';
 
 /**
  * Chip/Tag for filters, categories, and multi-select items.
