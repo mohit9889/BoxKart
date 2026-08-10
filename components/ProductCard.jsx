@@ -7,14 +7,17 @@ import { useCart } from '@/lib/cart';
 import Icon from '@/components/Icon';
 import { staggerChild, hoverTap, duration } from '@/lib/motion';
 
-/* ── CSS box placeholder (no images exist) ── */
-const BoxPlaceholder = ({ className = '' }) => (
+/* ── Product Image ── */
+const ProductImage = ({ src, alt, className = '' }) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
-    className={`bg-gradient-to-br from-[#d4a855] to-[#b8860b] rounded-lg shadow-md relative ${className}`}
+    className={`relative flex items-center justify-center ${className}`}
   >
-    <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[#e0bf78] to-transparent rounded-t-lg" />
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-0.5 bg-[#8a6508]/30" />
+    <img
+      src={src}
+      alt={alt}
+      className="w-full h-full object-contain drop-shadow-md mix-blend-multiply"
+    />
   </motion.div>
 );
 
@@ -124,7 +127,11 @@ export default function ProductCard({
       >
         {/* Image */}
         <div className="relative bg-gradient-to-br from-kraft-muted/40 to-kraft-muted/20 p-4 flex items-center justify-center w-36 shrink-0">
-          <BoxPlaceholder className="w-16 h-14" />
+          <ProductImage
+            src={product.image}
+            alt={product.name}
+            className="w-24 h-20"
+          />
           <Badges
             product={product}
             isBestValue={isBestValue}
@@ -171,7 +178,11 @@ export default function ProductCard({
         className="card-bk overflow-hidden group"
       >
         <div className="relative bg-gradient-to-br from-kraft-muted/40 to-kraft-muted/20 p-4 flex items-center justify-center h-32">
-          <BoxPlaceholder className="w-16 h-14" />
+          <ProductImage
+            src={product.image}
+            alt={product.name}
+            className="w-24 h-20"
+          />
           <Badges
             product={product}
             isBestValue={isBestValue}
@@ -208,7 +219,11 @@ export default function ProductCard({
         className="card-bk overflow-hidden group border-kraft/30 ring-1 ring-kraft/10"
       >
         <div className="relative bg-gradient-to-br from-kraft-muted/50 to-kraft-muted/30 p-8 flex items-center justify-center h-52">
-          <BoxPlaceholder className="w-28 h-24" />
+          <ProductImage
+            src={product.image}
+            alt={product.name}
+            className="w-40 h-36"
+          />
           <Badges
             product={product}
             isBestValue={isBestValue}
@@ -283,7 +298,11 @@ export default function ProductCard({
     >
       {/* Image Area */}
       <div className="relative bg-gradient-to-br from-kraft-muted/40 to-kraft-muted/20 p-6 flex items-center justify-center h-44">
-        <BoxPlaceholder className="w-24 h-20" />
+        <ProductImage
+          src={product.image}
+          alt={product.name}
+          className="w-32 h-28"
+        />
         <Badges
           product={product}
           isBestValue={isBestValue}

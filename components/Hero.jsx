@@ -137,12 +137,13 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: duration.slow }}
-                className="absolute bottom-16 left-12 w-44 h-36"
+                className="absolute bottom-14 left-10 w-48 h-40"
               >
-                <div className="w-full h-full bg-gradient-to-br from-[#d4a855] to-[#b8860b] rounded-lg shadow-lg border border-[#c49530]/50 relative">
-                  <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-[#e0bf78] to-transparent rounded-t-lg" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-0.5 bg-[#8a6508]/30" />
-                </div>
+                <img
+                  src="/images/box-large.svg"
+                  alt="Large Box"
+                  className="w-full h-full object-contain drop-shadow-2xl mix-blend-multiply"
+                />
                 <motion.div
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -158,12 +159,13 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: duration.slow }}
-                className="absolute bottom-28 right-16 w-32 h-28"
+                className="absolute bottom-26 right-14 w-36 h-32"
               >
-                <div className="w-full h-full bg-gradient-to-br from-[#c9993d] to-[#a37209] rounded-lg shadow-lg border border-[#b58a20]/50 relative">
-                  <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[#dbb460] to-transparent rounded-t-lg" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-0.5 bg-[#8a6508]/30" />
-                </div>
+                <img
+                  src="/images/box-medium.svg"
+                  alt="Medium Box"
+                  className="w-full h-full object-contain drop-shadow-xl mix-blend-multiply"
+                />
                 <motion.div
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -179,11 +181,13 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: duration.slow }}
-                className="absolute top-20 right-24 w-24 h-20"
+                className="absolute top-18 right-22 w-28 h-24"
               >
-                <div className="w-full h-full bg-gradient-to-br from-[#dbb460] to-[#b8860b] rounded-md shadow-md border border-[#c49530]/50 relative">
-                  <div className="absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-[#e8ca82] to-transparent rounded-t-md" />
-                </div>
+                <img
+                  src="/images/box-small.svg"
+                  alt="Small Box"
+                  className="w-full h-full object-contain drop-shadow-lg mix-blend-multiply"
+                />
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -199,13 +203,13 @@ export default function Hero() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7, duration: duration.slow }}
-                className="absolute top-32 left-8 w-28 h-8"
+                className="absolute top-30 left-6 w-28 h-28"
               >
-                <div className="w-full h-full bg-gradient-to-r from-gray-300 to-gray-400 rounded-md shadow-sm border border-gray-300/50 relative flex items-center justify-center">
-                  <div className="text-[8px] font-bold text-gray-600 uppercase tracking-wider">
-                    Courier Bag
-                  </div>
-                </div>
+                <img
+                  src="/images/courier-bag-m.svg"
+                  alt="Courier Bag"
+                  className="w-full h-full object-contain drop-shadow-md mix-blend-multiply"
+                />
               </motion.div>
 
               {/* Tape */}
@@ -213,11 +217,13 @@ export default function Hero() {
                 initial={{ opacity: 0, rotate: -10 }}
                 animate={{ opacity: 1, rotate: 0 }}
                 transition={{ delay: 0.8, duration: duration.normal }}
-                className="absolute bottom-8 right-8 w-14 h-14"
+                className="absolute bottom-6 right-6 w-24 h-24"
               >
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#f5deb3] to-[#d4a843] shadow-md border-4 border-[#c49530] relative">
-                  <div className="absolute inset-3 rounded-full bg-[#8B7355]" />
-                </div>
+                <img
+                  src="/images/bopp-tape.svg"
+                  alt="Packing Tape"
+                  className="w-full h-full object-contain drop-shadow-md mix-blend-multiply"
+                />
               </motion.div>
 
               {/* Bubble Wrap */}
@@ -225,16 +231,13 @@ export default function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9, duration: duration.normal }}
-                className="absolute top-8 left-24"
+                className="absolute top-6 left-22 w-28 h-28"
               >
-                <div className="grid grid-cols-4 gap-0.5 opacity-40">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-2 h-2 rounded-full bg-blue-200 border border-blue-300/50"
-                    />
-                  ))}
-                </div>
+                <img
+                  src="/images/bubble-wrap.svg"
+                  alt="Bubble Wrap"
+                  className="w-full h-full object-contain opacity-60 mix-blend-multiply"
+                />
               </motion.div>
             </div>
           </motion.div>
