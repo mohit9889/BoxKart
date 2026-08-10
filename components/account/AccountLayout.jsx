@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon';
@@ -32,6 +33,12 @@ const TABS = [
 export default function AccountLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      router.push('/login');
+    }
+  }, [router]);
 
   const handleLogout = async () => {
     await authService.logout();

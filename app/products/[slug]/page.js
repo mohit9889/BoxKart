@@ -31,11 +31,8 @@ export default function ProductDetailPage({ params }) {
     return (
       <ErrorState
         title="Product not found"
-        message="This packaging product doesn't exist or may have been removed."
-        retry={{
-          label: 'Browse Products',
-          action: () => router.push('/products'),
-        }}
+        description="This packaging product doesn't exist or may have been removed."
+        onRetry={() => router.push('/products')}
       />
     );
   }

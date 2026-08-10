@@ -55,10 +55,14 @@ export default function NewProductPage() {
           <h2 className="font-bold text-gray-900 mb-6">Basic Information</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="productName"
+                className="text-sm font-medium text-gray-700"
+              >
                 Product Name
               </label>
               <input
+                id="productName"
                 required
                 value={formData.name}
                 onChange={(e) =>
@@ -71,8 +75,14 @@ export default function NewProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">SKU</label>
+              <label
+                htmlFor="sku"
+                className="text-sm font-medium text-gray-700"
+              >
+                SKU
+              </label>
               <input
+                id="sku"
                 required
                 value={formData.sku}
                 onChange={(e) =>
@@ -85,10 +95,14 @@ export default function NewProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="category"
+                className="text-sm font-medium text-gray-700"
+              >
                 Category
               </label>
               <select
+                id="category"
                 value={formData.category}
                 onChange={(e) =>
                   setFormData({ ...formData, category: e.target.value })
@@ -108,7 +122,10 @@ export default function NewProductPage() {
           <h2 className="font-bold text-gray-900 mb-6">Pricing & Inventory</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="price"
+                className="text-sm font-medium text-gray-700"
+              >
                 Unit Price
               </label>
               <div className="relative">
@@ -116,6 +133,7 @@ export default function NewProductPage() {
                   ₹
                 </span>
                 <input
+                  id="price"
                   required
                   value={formData.price}
                   onChange={(e) =>
@@ -132,10 +150,14 @@ export default function NewProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="moq"
+                className="text-sm font-medium text-gray-700"
+              >
                 MOQ (Minimum Order Qty)
               </label>
               <input
+                id="moq"
                 required
                 value={formData.moq}
                 onChange={(e) =>
@@ -151,10 +173,14 @@ export default function NewProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="status"
+                className="text-sm font-medium text-gray-700"
+              >
                 Status
               </label>
               <select
+                id="status"
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })

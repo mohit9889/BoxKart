@@ -167,10 +167,14 @@ export default function AdminOrderDetailsPage() {
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="orderStatus"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Order Status
                 </label>
                 <select
+                  id="orderStatus"
                   value={updateData.status}
                   onChange={(e) =>
                     setUpdateData({ ...updateData, status: e.target.value })
@@ -184,10 +188,14 @@ export default function AdminOrderDetailsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="courier"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Courier Partner
                 </label>
                 <input
+                  id="courier"
                   type="text"
                   value={updateData.courier}
                   onChange={(e) =>
@@ -199,10 +207,14 @@ export default function AdminOrderDetailsPage() {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="awb"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Tracking Number (AWB)
                 </label>
                 <input
+                  id="awb"
                   type="text"
                   value={updateData.awb}
                   onChange={(e) =>

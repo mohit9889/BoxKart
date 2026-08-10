@@ -48,10 +48,14 @@ export default function AdminLoginPage() {
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
               Email Address
             </label>
             <input
+              id="email"
               type="email"
               required
               value={email}
@@ -61,10 +65,14 @@ export default function AdminLoginPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
+              id="password"
               type="password"
               required
               value={password}

@@ -51,10 +51,14 @@ function NewQuoteForm() {
           <h2 className="font-bold text-gray-900 mb-6">Quote Summary</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="customer"
+                className="text-sm font-medium text-gray-700"
+              >
                 Customer
               </label>
               <input
+                id="customer"
                 required
                 value={formData.customer}
                 onChange={(e) =>
@@ -66,7 +70,10 @@ function NewQuoteForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="amount"
+                className="text-sm font-medium text-gray-700"
+              >
                 Total Amount
               </label>
               <div className="relative">
@@ -74,6 +81,7 @@ function NewQuoteForm() {
                   ₹
                 </span>
                 <input
+                  id="amount"
                   required
                   value={formData.amount}
                   onChange={(e) =>
@@ -90,10 +98,14 @@ function NewQuoteForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="expiry"
+                className="text-sm font-medium text-gray-700"
+              >
                 Expiry Date
               </label>
               <input
+                id="expiry"
                 required
                 value={formData.expiry}
                 onChange={(e) =>

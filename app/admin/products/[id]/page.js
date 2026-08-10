@@ -83,38 +83,54 @@ export default function EditProductPage() {
           <h2 className="font-bold text-gray-900 mb-6">Basic Information</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="productName"
+                className="text-sm font-medium text-gray-700"
+              >
                 Product Name
               </label>
               <input
+                id="productName"
                 required
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
                 type="text"
+                placeholder="e.g. Medium Shipping Box"
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">SKU</label>
+              <label
+                htmlFor="sku"
+                className="text-sm font-medium text-gray-700"
+              >
+                SKU
+              </label>
               <input
+                id="sku"
                 required
                 value={formData.sku}
                 onChange={(e) =>
                   setFormData({ ...formData, sku: e.target.value })
                 }
                 type="text"
+                placeholder="e.g. BK-STD-05"
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900 uppercase"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="category"
+                className="text-sm font-medium text-gray-700"
+              >
                 Category
               </label>
               <select
+                id="category"
                 value={formData.category}
                 onChange={(e) =>
                   setFormData({ ...formData, category: e.target.value })
@@ -134,25 +150,42 @@ export default function EditProductPage() {
           <h2 className="font-bold text-gray-900 mb-6">Pricing & Inventory</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="price"
+                className="text-sm font-medium text-gray-700"
+              >
                 Unit Price
               </label>
-              <input
-                required
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData({ ...formData, price: e.target.value })
-                }
-                type="text"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900"
-              />
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 font-medium">
+                  ₹
+                </span>
+                <input
+                  id="price"
+                  required
+                  value={formData.price.replace('₹', '')}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      price: `₹${e.target.value.replace(/[^0-9.]/g, '')}`,
+                    })
+                  }
+                  type="text"
+                  placeholder="0.00"
+                  className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="moq"
+                className="text-sm font-medium text-gray-700"
+              >
                 MOQ (Minimum Order Qty)
               </label>
               <input
+                id="moq"
                 required
                 value={formData.moq}
                 onChange={(e) =>
@@ -168,10 +201,14 @@ export default function EditProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="status"
+                className="text-sm font-medium text-gray-700"
+              >
                 Status
               </label>
               <select
+                id="status"
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })

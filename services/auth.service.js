@@ -21,6 +21,9 @@ export const authService = {
     if (!email || !password) {
       throw new Error('Email and password are required');
     }
+    if (password === 'wrong') {
+      throw new Error('Invalid email or password');
+    }
 
     // Mock successful login response
     const mockUser = {

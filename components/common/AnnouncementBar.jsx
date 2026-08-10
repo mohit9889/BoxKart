@@ -22,7 +22,8 @@ export default function AnnouncementBar() {
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
           className="bg-charcoal text-white text-center text-sm relative overflow-hidden"
-          role="banner"
+          role="region"
+          aria-label="Announcement"
         >
           <div className="container-bk py-2.5 flex items-center justify-center gap-2">
             <span className="font-medium">

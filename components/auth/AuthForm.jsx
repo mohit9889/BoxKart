@@ -10,6 +10,7 @@ import { authService } from '@/services/auth.service';
 export default function AuthForm({ initialMode = 'login' }) {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
 
   const toggleMode = () => {
@@ -39,7 +40,7 @@ export default function AuthForm({ initialMode = 'login' }) {
       router.push('/account');
     } catch (error) {
       console.error('Authentication failed:', error);
-      // Here you would typically show a toast or error message
+      setErrorMsg(error.message || 'An error occurred during authentication.');
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +73,16 @@ export default function AuthForm({ initialMode = 'login' }) {
                 : 'Join BoxKart for bulk discounts and more.'}
             </motion.p>
           </div>
+
+          {errorMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm text-center font-medium"
+            >
+              {errorMsg}
+            </motion.div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
