@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon';
-import { authService } from '@/services/auth.service';
+import { useAuth } from '@/components/auth/AuthContext';
 
 const TABS = [
   {
@@ -33,16 +33,16 @@ const TABS = [
 export default function AccountLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { isAuthenticated, isLoading, logout } = useAuth();
 
   useEffect(() => {
-    if (!authService.isAuthenticated()) {
+    if (!isLoading && !isAuthenticated) {
       router.push('/login');
     }
-  }, [router]);
+  }, [isLoading, isAuthenticated, router]);
 
   const handleLogout = async () => {
-    await authService.logout();
-    window.dispatchEvent(new Event('storage'));
+    await logout();
     router.push('/');
   };
 

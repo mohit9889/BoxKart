@@ -10,7 +10,7 @@ import SearchBar from '@/components/common/SearchBar';
 import MobileMenu from '@/components/common/MobileMenu';
 import CartDrawer from '@/components/common/CartDrawer';
 import Icon from '@/components/common/Icon';
-import { authService } from '@/services/auth.service';
+import { useAuth } from '@/components/auth/AuthContext';
 
 const NAV_LINKS = [
   {
@@ -34,27 +34,15 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await authService.logout();
-    window.dispatchEvent(new Event('storage'));
+    await logout();
     router.push('/');
   };
-
-  useEffect(() => {
-    const checkAuth = () => {
-      setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
-    };
-    checkAuth();
-
-    // Listen for cross-tab or manual dispatch events
-    window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

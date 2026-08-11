@@ -3,8 +3,19 @@
 import AuthForm from './AuthForm';
 import Icon from '@/components/common/Icon';
 import { motion } from 'motion/react';
+import { useAuth } from '@/components/auth/AuthContext';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AuthLayout({ mode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push('/account');
+    }
+  }, [isAuthenticated, isLoading, router]);
   return (
     <div className="min-h-[calc(100vh-140px)] w-full flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 bg-[#faf8f5]">
       {/* Container holding the split layout */}

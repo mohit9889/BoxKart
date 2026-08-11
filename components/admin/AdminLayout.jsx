@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon';
-import { adminAuthService } from '@/services/admin/auth.service';
+import { useAuth } from '@/components/auth/AuthContext';
 import { useEffect, useState } from 'react';
 
 const ADMIN_TABS = [
@@ -32,31 +32,29 @@ const ADMIN_TABS = [
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const { isAuthenticated, user, isLoading, logout } = useAuth();
+  const isClientAuth = !isLoading
+    ? isAuthenticated && user?.role === 'ADMIN'
+    : null;
 
   useEffect(() => {
-    // Basic auth check
-    const checkAuth = () => {
-      const isAuth = adminAuthService.isAuthenticated();
-      setIsAuthenticated(isAuth);
-
-      if (!isAuth && pathname !== '/admin/login') {
+    if (!isLoading) {
+      if (!isClientAuth && pathname !== '/admin/login') {
         router.replace('/admin/login');
       }
-    };
-
-    setTimeout(checkAuth, 0);
-  }, [pathname, router]);
+    }
+  }, [isLoading, isClientAuth, pathname, router]);
 
   const handleLogout = async () => {
-    await adminAuthService.logout();
+    await logout();
     router.push('/admin/login');
   };
 
   // Prevent flash of protected content before redirect
   if (
-    isAuthenticated === null ||
-    (!isAuthenticated && pathname !== '/admin/login')
+    isLoading ||
+    isClientAuth === null ||
+    (!isClientAuth && pathname !== '/admin/login')
   ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">

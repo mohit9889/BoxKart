@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import { useRouter } from 'next/navigation';
-import { authService } from '@/services/auth.service';
+import { useAuth } from '@/components/auth/AuthContext';
 
 export default function AuthForm({ initialMode = 'login' }) {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
+  const { login, signup } = useAuth();
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
@@ -28,19 +29,27 @@ export default function AuthForm({ initialMode = 'login' }) {
       const password = e.target.password.value;
 
       if (isLogin) {
-        await authService.login(email, password);
+        await login(email, password);
       } else {
         const name = e.target.name.value;
-        await authService.signup(name, email, password);
+        const [firstName, ...lastNames] = name.trim().split(' ');
+        const lastName = lastNames.join(' ');
+        await signup({ firstName, lastName, email, password });
       }
 
-      // Refresh the page or dispatch an event if needed, then redirect
-      // Dispatching a storage event helps components listening to localStorage update (like Header)
-      window.dispatchEvent(new Event('storage'));
       router.push('/account');
     } catch (error) {
       console.error('Authentication failed:', error);
-      setErrorMsg(error.message || 'An error occurred during authentication.');
+
+      // Handle Zod validation details from ApiError
+      if (error.details && Array.isArray(error.details)) {
+        const msg = error.details.map((d) => d.message).join(', ');
+        setErrorMsg(msg);
+      } else {
+        setErrorMsg(
+          error.message || 'An error occurred during authentication.'
+        );
+      }
     } finally {
       setIsLoading(false);
     }

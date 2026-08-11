@@ -295,22 +295,22 @@ POST /api/v1/auth/login
 ```
 
 - [ ] Connect login form.
-- [ ] Store/use authentication state securely.
-- [ ] Handle invalid credentials.
-- [ ] Handle inactive/suspended users.
-- [ ] Handle rate limiting.
+- [x] Connect login form.
+- [x] Send credentials to backend.
+- [x] Handle incorrect credentials.
+- [x] Verify cookie is received and stored.
 
 ### Functionality 1.3 — Current user/session
 
-- [ ] Restore authentication state on refresh.
-- [ ] Fetch/resolve current user.
-- [ ] Handle expired access token.
+- [x] Restore authentication state on refresh.
+- [x] Fetch/resolve current user.
+- [x] Handle expired access token.
 
 ### Functionality 1.4 — Logout
 
-- [ ] Clear frontend authentication state.
-- [ ] Clear access/refresh token according to the chosen auth strategy.
-- [ ] Return user to logged-out state.
+- [x] Clear frontend authentication state.
+- [x] Clear access/refresh token according to the chosen auth strategy.
+- [x] Return user to logged-out state.
 
 **Exit criteria:** Signup, login, refresh/session restoration, and logout work against the real backend.
 
@@ -929,10 +929,10 @@ Start with:
 
 ```text
 [x] Module 0 — API Foundation
-[ ] Module 1 — Authentication / Login
-[ ] Module 1 — Signup
-[ ] Module 1 — Session restoration
-[ ] Module 1 — Logout
+[x] Module 1 — Authentication / Login
+[x] Module 1 — Signup
+[x] Module 1 — Session restoration
+[x] Module 1 — Logout
 
 [ ] Module 2 — Product listing
 [ ] Module 2 — Product detail

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Icon from '@/components/common/Icon';
-import { adminAuthService } from '@/services/admin/auth.service';
+import { useAuth } from '@/components/auth/AuthContext';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -11,6 +11,13 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('admin123');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user?.role === 'ADMIN') {
+      router.push('/admin');
+    }
+  }, [authLoading, isAuthenticated, user, router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,10 +25,15 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      await adminAuthService.login(email, password);
-      router.push('/admin');
+      const user = await login(email, password);
+      if (user.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        setError('Unauthorized: Admin access required');
+      }
     } catch (err) {
       setError(err.message || 'Login failed');
+    } finally {
       setIsLoading(false);
     }
   };
