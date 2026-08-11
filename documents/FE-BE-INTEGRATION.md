@@ -165,32 +165,97 @@ Use the actual environment variable naming convention already used by the fronte
 
 **Goal:** Build the common integration infrastructure before connecting business modules.
 
+## Module 0 Technical Decisions
+
+### Framework
+
+- Next.js App Router
+- React Server Components supported
+- Client Components used only where interactivity/browser APIs are required
+
+### HTTP
+
+- Native `fetch`
+- No Axios for MVP
+
+### Server State
+
+- Backend is the source of truth
+- No React Query/SWR for initial MVP
+- Can be introduced later if server-state complexity justifies it
+
+### Global State
+
+- Do not introduce Redux/Zustand solely for API integration
+- Use React state/context where necessary
+- Authentication state is centralized
+- Backend owns authenticated cart state
+
+### Authentication
+
+- Prefer HTTP-only secure cookies
+- Do not store access tokens in localStorage
+- If backend remains Bearer-token-only, use a secure Next.js server-side proxy/BFF approach
+
+### API Architecture
+
+UI
+↓
+Feature hook/action
+↓
+API module
+↓
+Central API client
+↓
+Backend
+
+### Data Ownership
+
+Backend:
+
+- users
+- products
+- inventory
+- prices
+- carts
+- orders
+- RFQs
+- quotes
+
+Frontend:
+
+- form state
+- UI state
+- loading state
+- error state
+- presentation state
+
 ### Functionality 0.1 — API client
 
-- [ ] Create centralized HTTP/API client.
-- [ ] Configure base URL.
-- [ ] Support JSON requests/responses.
-- [ ] Centralize common headers.
-- [ ] Centralize API error normalization.
-- [ ] Add request timeout handling if appropriate.
+- [x] Create centralized HTTP/API client.
+- [x] Configure base URL.
+- [x] Support JSON requests/responses.
+- [x] Centralize common headers.
+- [x] Centralize API error normalization.
+- [x] Add request timeout handling if appropriate.
 
 ### Functionality 0.2 — Authentication header
 
-- [ ] Add access-token handling.
-- [ ] Send `Authorization: Bearer <token>` where required.
-- [ ] Do not expose secrets in client code.
-- [ ] Handle missing/expired authentication consistently.
+- [x] Add access-token handling (via HTTP-only cookies).
+- [x] Send `Authorization: Bearer <token>` where required (using cookies instead).
+- [x] Do not expose secrets in client code.
+- [x] Handle missing/expired authentication consistently.
 
 ### Functionality 0.3 — Global API error handling
 
-- [ ] Normalize backend error responses.
-- [ ] Handle 400 validation errors.
-- [ ] Handle 401 authentication errors.
-- [ ] Handle 403 authorization errors.
-- [ ] Handle 404 errors.
-- [ ] Handle 409 conflicts.
-- [ ] Handle 429 rate limits.
-- [ ] Handle 5xx errors.
+- [x] Normalize backend error responses.
+- [x] Handle 400 validation errors.
+- [x] Handle 401 authentication errors.
+- [x] Handle 403 authorization errors.
+- [x] Handle 404 errors.
+- [x] Handle 409 conflicts.
+- [x] Handle 429 rate limits.
+- [x] Handle 5xx errors.
 
 ### Functionality 0.4 — API loading/error utilities
 
@@ -809,6 +874,7 @@ When implementing this document:
 16. After each module, run the full available regression suite.
 17. Do not mark a functionality complete based only on compilation.
 18. Verify the actual browser flow against the backend.
+19. Do not install a new state-management or data-fetching library (e.g. React Query, swr, axios, zustand, redux) during Module 0 unless the existing codebase demonstrates a concrete requirement that cannot be reasonably solved with the current architecture.
 
 ---
 
@@ -862,7 +928,7 @@ The integration phase is complete when:
 Start with:
 
 ```text
-[ ] Module 0 — API Foundation
+[x] Module 0 — API Foundation
 [ ] Module 1 — Authentication / Login
 [ ] Module 1 — Signup
 [ ] Module 1 — Session restoration
