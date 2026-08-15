@@ -279,7 +279,7 @@ export default function BulkPricing({ products = [] }) {
 
               {/* CTA */}
               <Link
-                href={`/products/${product.slug}`}
+                href={`/products/${product.slug}?qty=${tier?.qty ?? ''}`}
                 className="btn-accent w-full text-center mt-6 block"
               >
                 Order {product.name}

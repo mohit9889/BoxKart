@@ -20,6 +20,12 @@ const ADMIN_TABS = [
     href: '/admin/products',
   },
   { id: 'rfqs', label: 'RFQs', icon: 'FileText', href: '/admin/rfqs' },
+  {
+    id: 'inquiries',
+    label: 'Inquiries',
+    icon: 'Inbox',
+    href: '/admin/inquiries',
+  },
   { id: 'quotes', label: 'Quotes', icon: 'FileText', href: '/admin/quotes' },
   {
     id: 'orders',

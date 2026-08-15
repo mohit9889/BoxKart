@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import {
@@ -12,13 +13,13 @@ import {
 } from '@/lib/motion';
 
 const SHIPPING_CATEGORIES = [
-  { label: 'Clothing', icon: 'Shirt' },
-  { label: 'Cosmetics', icon: 'Droplets' },
-  { label: 'Electronics', icon: 'Smartphone' },
-  { label: 'Books', icon: 'BookOpen' },
-  { label: 'Shoes', icon: 'Footprints' },
-  { label: 'Food', icon: 'UtensilsCrossed' },
-  { label: 'Other', icon: 'MoreHorizontal' },
+  { id: 'clothing', label: 'Clothing', icon: 'Shirt' },
+  { id: 'cosmetics', label: 'Cosmetics', icon: 'Droplets' },
+  { id: 'electronics', label: 'Electronics', icon: 'Smartphone' },
+  { id: 'books', label: 'Books', icon: 'BookOpen' },
+  { id: 'shoes', label: 'Shoes', icon: 'Footprints' },
+  { id: 'food', label: 'Food', icon: 'UtensilsCrossed' },
+  { id: 'other', label: 'Other', icon: 'MoreHorizontal' },
 ];
 
 const STATS = [
@@ -28,10 +29,21 @@ const STATS = [
 ];
 
 /**
- * Hero section with headline, CTAs, use-case chips,
- * quick stats, and CSS-rendered box composition.
+ * Hero section — full-width landing with CTAs and shipping category quick-select.
  */
 export default function Hero() {
+  const router = useRouter();
+
+  const handleCategoryClick = (categoryId) => {
+    // Update URL without a full reload, then smooth-scroll to BoxFinder
+    router.push(`/?category=${categoryId}`, { scroll: false });
+    setTimeout(() => {
+      document
+        .getElementById('box-finder')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-warm-white via-white to-kraft-muted/30">
       <div className="container-bk py-16 md:py-24 lg:py-28">
@@ -95,14 +107,14 @@ export default function Hero() {
               <p className="text-label mb-3">What are you shipping?</p>
               <div className="flex flex-wrap gap-2">
                 {SHIPPING_CATEGORIES.map((cat) => (
-                  <a
-                    key={cat.label}
-                    href="#box-finder"
+                  <button
+                    key={cat.id}
+                    onClick={() => handleCategoryClick(cat.id)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-gray hover:bg-kraft-muted rounded-full text-xs font-medium text-text-secondary hover:text-charcoal transition-colors"
                   >
                     <Icon name={cat.icon} size={12} />
                     {cat.label}
-                  </a>
+                  </button>
                 ))}
               </div>
             </motion.div>

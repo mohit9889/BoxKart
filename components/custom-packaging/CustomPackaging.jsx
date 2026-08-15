@@ -32,16 +32,45 @@ export default function CustomPackaging() {
     location: '',
   });
 
+  const [errorMsg, setErrorMsg] = useState(null);
+
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormState('loading');
-    setTimeout(() => {
+    setErrorMsg(null);
+
+    try {
+      const res = await fetch('/api/custom-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          // Send unit as uppercase to match BE enum
+          unit: 'INCH',
+        }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        const msg =
+          json.error?.details?.[0]?.message ||
+          json.error?.message ||
+          'Something went wrong. Please try again.';
+        setErrorMsg(msg);
+        setFormState('idle');
+        return;
+      }
+
       setFormState('success');
-    }, 1500);
+    } catch {
+      setErrorMsg('Network error. Please check your connection and try again.');
+      setFormState('idle');
+    }
   };
 
   return (
@@ -81,22 +110,6 @@ export default function CustomPackaging() {
                   </span>
                 </div>
               ))}
-            </div>
-
-            {/* Custom Box Visual */}
-            <div className="hidden lg:block">
-              <div className="relative w-48 h-36 mx-auto">
-                <div className="w-full h-full bg-gradient-to-br from-white/10 to-white/5 rounded-lg border border-white/10 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-kraft/20 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                      <span className="text-xl font-bold text-kraft-light">
-                        B
-                      </span>
-                    </div>
-                    <p className="text-xs text-white/50">Your Brand Here</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </motion.div>
 
@@ -368,6 +381,13 @@ export default function CustomPackaging() {
                       placeholder="City / Pincode"
                     />
                   </div>
+
+                  {/* Error message */}
+                  {errorMsg && (
+                    <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                      {errorMsg}
+                    </div>
+                  )}
 
                   <motion.button
                     type="submit"

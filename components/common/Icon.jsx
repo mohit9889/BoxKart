@@ -70,6 +70,7 @@ import {
   ChartIncreaseIcon,
   Call02Icon,
   Leaf02Icon,
+  InboxIcon,
   Logout01Icon,
 } from '@hugeicons/core-free-icons';
 
@@ -104,6 +105,7 @@ const ICON_MAP = {
   Home: Home01Icon,
   Image: Image01Icon,
   Info: InformationCircleIcon,
+  Inbox: InboxIcon,
   Layers: Layers01Icon,
   LayoutDashboard: LayoutGridIcon,
   Loader2: Loading02Icon,

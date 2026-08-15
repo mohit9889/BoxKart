@@ -1,15 +1,27 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { bundles } from '@/data/bundles';
+import { bundles as staticBundles } from '@/data/bundles';
 import { useCart } from '@/lib/cart';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 
 /**
- * Packaging bundles section with 3 bundle cards.
+ * Packaging bundles section.
+ * Accepts `bundles` from SSR (DB-driven). Falls back to static data if empty.
+ * BE shape: { id, slug, name, tagline, description, items (JSON), price, originalPrice, savings, badge, popular }
+ * Static shape uses `includes` instead of `items` — normalized below.
  */
-export default function PackagingBundles() {
+export default function PackagingBundles({ bundles: propBundles = [] }) {
+  // Use DB bundles if available, otherwise fall back to static
+  const rawBundles = propBundles.length > 0 ? propBundles : staticBundles;
+
+  // Normalize: BE uses `items`, static data uses `includes`
+  const bundles = rawBundles.map((b) => ({
+    ...b,
+    includes: b.items ?? b.includes ?? [],
+  }));
+
   return (
     <section id="bundles" className="section-padding">
       <div className="container-bk">
@@ -112,23 +124,23 @@ export default function PackagingBundles() {
                   </ul>
 
                   {bundle.price ? (
-                    <motion.button
-                      whileTap={{ scale: 0.98 }}
-                      className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${
+                    <Link
+                      href={`/bulk-orders?bundle=${bundle.slug}`}
+                      className={`w-full py-3 rounded-xl text-sm font-semibold transition-all text-center block ${
                         bundle.popular
                           ? 'bg-accent text-white hover:bg-accent-dark'
                           : 'bg-charcoal text-white hover:bg-charcoal-light'
                       }`}
                     >
-                      {bundle.cta}
-                    </motion.button>
+                      {bundle.cta ?? `Buy ${bundle.name}`}
+                    </Link>
                   ) : (
                     <Link
                       href="/custom-packaging"
                       className="btn-outline w-full text-center flex items-center justify-center gap-2"
                     >
                       <Icon name="MessageSquare" size={16} />
-                      {bundle.cta}
+                      {bundle.cta ?? 'Get Custom Quote'}
                     </Link>
                   )}
                 </div>

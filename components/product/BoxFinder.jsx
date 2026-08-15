@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
@@ -40,6 +41,7 @@ const CATEGORY_DEFAULTS = {
  * Step 3: Select quantity → calls POST /box-engine/recommend → shows result
  */
 export default function BoxFinder() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState(null);
   const [dims, setDims] = useState({ l: '', w: '', h: '' });
@@ -51,6 +53,23 @@ export default function BoxFinder() {
   const [showResult, setShowResult] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [error, setError] = useState(null);
+
+  /**
+   * On mount: if ?category= is in the URL (set by the Hero section),
+   * pre-select that category, pre-fill dimensions, and jump to Step 2.
+   */
+  useEffect(() => {
+    const catParam = searchParams.get('category');
+    if (!catParam) return;
+    const match = CATEGORIES.find((c) => c.id === catParam);
+    if (!match) return;
+    startTransition(() => {
+      setCategory(match.id);
+      const defaults = CATEGORY_DEFAULTS[match.id];
+      if (defaults) setDims({ l: defaults.l, w: defaults.w, h: defaults.h });
+      setStep(2);
+    });
+  }, [searchParams]);
 
   const handleCategorySelect = (id) => {
     setCategory(id);
@@ -466,7 +485,7 @@ export default function BoxFinder() {
                               Best Fit
                             </span>
                             <span className="inline-flex items-center gap-1 text-xs bg-warm-gray text-text-secondary px-2.5 py-1 rounded-full">
-                              <Icon name="Maximize2" size={12} />
+                              <Icon name="FoldVertical" size={12} />
                               {Math.round(topRec.utilization * 100)}%
                               utilization
                             </span>
@@ -477,7 +496,7 @@ export default function BoxFinder() {
                                   : 'bg-amber-50 text-amber-700'
                               }`}
                             >
-                              <Icon name="Warehouse" size={12} />
+                              <Icon name="Box" size={12} />
                               {topRec.inventory.status === 'AVAILABLE'
                                 ? 'In Stock'
                                 : 'Low Stock'}

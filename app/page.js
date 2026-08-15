@@ -17,6 +17,7 @@ import {
   fetchCategories,
   fetchPopularProducts,
   fetchBulkPricingProducts,
+  fetchBundles,
 } from '@/lib/api';
 import { normalizeCategories, normalizeProducts } from '@/lib/normalizeProduct';
 
@@ -26,11 +27,13 @@ import { normalizeCategories, normalizeProducts } from '@/lib/normalizeProduct';
  * for SEO-friendly SSR. Client-interactive sections remain CSR.
  */
 export default async function HomePage() {
-  const [rawCategories, rawProducts, rawBulkProducts] = await Promise.all([
-    fetchCategories(),
-    fetchPopularProducts(),
-    fetchBulkPricingProducts(),
-  ]);
+  const [rawCategories, rawProducts, rawBulkProducts, bundles] =
+    await Promise.all([
+      fetchCategories(),
+      fetchPopularProducts(),
+      fetchBulkPricingProducts(),
+      fetchBundles(),
+    ]);
 
   const categories = normalizeCategories(rawCategories);
   const popularProducts = normalizeProducts(rawProducts);
@@ -47,7 +50,7 @@ export default async function HomePage() {
       <BulkPricing products={bulkPricingProducts} />
       <WhyBoxKart />
       <CustomPackaging />
-      <PackagingBundles />
+      <PackagingBundles bundles={bundles} />
       <HowItWorks />
       <ReorderSection />
       <Testimonials />

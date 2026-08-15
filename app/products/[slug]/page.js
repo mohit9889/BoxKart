@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, use, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { products, getPriceForQuantity } from '@/data/products';
 import { useCart } from '@/lib/cart';
 import { getUpsellPrompt } from '@/lib/pricing';
@@ -18,6 +18,7 @@ import Icon from '@/components/common/Icon';
  */
 export default function ProductDetailPage({ params }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const resolvedParams = use(params);
   const product = products.find((p) => p.slug === resolvedParams.slug);
   const { addItem } = useCart();
@@ -26,6 +27,18 @@ export default function ProductDetailPage({ params }) {
   );
   const [added, setAdded] = useState(false);
   const [showBulkQuote, setShowBulkQuote] = useState(false);
+
+  /**
+   * If ?qty= is in the URL (e.g. from BulkPricing section),
+   * pre-select that tier if it exists, otherwise keep the first tier.
+   */
+  useEffect(() => {
+    if (!product) return;
+    const qtyParam = parseInt(searchParams.get('qty'), 10);
+    if (!qtyParam) return;
+    const matchingTier = product.pricingTiers?.find((t) => t.qty === qtyParam);
+    if (matchingTier) startTransition(() => setSelectedQty(matchingTier.qty));
+  }, [searchParams, product]);
 
   if (!product) {
     return (
