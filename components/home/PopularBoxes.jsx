@@ -2,16 +2,13 @@
 
 import { motion } from 'motion/react';
 import ProductCard from '@/components/product/ProductCard';
-import { getPopularProducts } from '@/data/products';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 
 /**
  * Popular products grid section on the homepage.
  */
-export default function PopularBoxes() {
-  const products = getPopularProducts();
-
+export default function PopularBoxes({ products = [] }) {
   return (
     <section className="section-padding bg-white">
       <div className="container-bk">

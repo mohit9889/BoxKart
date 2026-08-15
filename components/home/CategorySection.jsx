@@ -2,13 +2,12 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { categories } from '@/data/categories';
 import Icon from '@/components/common/Icon';
 
 /**
  * Category browsing section with large visual cards.
  */
-export default function CategorySection() {
+export default function CategorySection({ categories = [] }) {
   return (
     <section className="section-padding">
       <div className="container-bk">

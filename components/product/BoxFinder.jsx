@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { products, getPriceForQuantity } from '@/data/products';
 import Icon from '@/components/common/Icon';
+
+/** Proxy route — same origin, no CSRF/CORS issues */
+const BOX_FINDER_PROXY = '/api/box-finder';
 
 const CATEGORIES = [
   { id: 'clothing', label: 'Clothing', icon: 'Shirt' },
@@ -19,7 +21,7 @@ const CATEGORIES = [
 
 const QUANTITIES = [100, 500, 1000, 5000, 10000];
 
-/** Default product dimensions by category (inches) for pre-filling. */
+/** Default product dimensions per category (inches) for pre-filling. */
 const CATEGORY_DEFAULTS = {
   clothing: { l: 11, w: 9, h: 2 },
   cosmetics: { l: 6, w: 4, h: 3 },
@@ -32,38 +34,10 @@ const CATEGORY_DEFAULTS = {
 };
 
 /**
- * Finds the best-fit box from the product catalogue.
- * Adds 0.5" clearance on each dimension before matching.
- */
-function findBestBox(reqL, reqW, reqH) {
-  const reqDims = [reqL, reqW, reqH].sort((a, b) => b - a);
-
-  const matchingBoxes = products.filter((p) => {
-    if (!p.length || !p.width || !p.height) return false;
-    if (p.category !== 'corrugated-boxes') return false;
-    const boxDims = [p.length, p.width, p.height].sort((a, b) => b - a);
-    return (
-      boxDims[0] >= reqDims[0] &&
-      boxDims[1] >= reqDims[1] &&
-      boxDims[2] >= reqDims[2]
-    );
-  });
-
-  if (matchingBoxes.length === 0) return null;
-
-  // Best Fit = smallest volume that fits
-  return matchingBoxes.reduce((best, current) => {
-    const bestVol = best.length * best.width * best.height;
-    const currentVol = current.length * current.width * current.height;
-    return currentVol < bestVol ? current : best;
-  });
-}
-
-/**
- * 3-step interactive Box Finder.
- * Step 1: Category selection.
- * Step 2: Product dimensions.
- * Step 3: Quantity selection → recommendation.
+ * 3-step interactive Box Finder powered by the real box-engine API.
+ * Step 1: What are you shipping? (category → pre-fills dimensions)
+ * Step 2: Enter product dimensions
+ * Step 3: Select quantity → calls POST /box-engine/recommend → shows result
  */
 export default function BoxFinder() {
   const [step, setStep] = useState(1);
@@ -71,8 +45,12 @@ export default function BoxFinder() {
   const [dims, setDims] = useState({ l: '', w: '', h: '' });
   const [unit, setUnit] = useState('inch');
   const [quantity, setQuantity] = useState(1000);
+
+  // API state
+  const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [recommendation, setRecommendation] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleCategorySelect = (id) => {
     setCategory(id);
@@ -91,44 +69,64 @@ export default function BoxFinder() {
     setStep(2);
   };
 
-  const handleDimsNext = () => {
-    setStep(3);
-  };
+  const handleDimsNext = () => setStep(3);
 
-  const handleQuantitySelect = (qty) => {
-    setQuantity(qty);
+  /** Call the box-finder proxy (Next.js API route → BE server-to-server). */
+  const handleQuantitySelect = useCallback(
+    async (qty) => {
+      setQuantity(qty);
+      setIsLoading(true);
+      setShowResult(true);
+      setError(null);
+      setRecommendations([]);
 
-    const lVal = parseFloat(dims.l) || 0;
-    const wVal = parseFloat(dims.w) || 0;
-    const hVal = parseFloat(dims.h) || 0;
+      const lVal = parseFloat(dims.l) || 0;
+      const wVal = parseFloat(dims.w) || 0;
+      const hVal = parseFloat(dims.h) || 0;
 
-    const factor = unit === 'cm' ? 0.393701 : 1;
-    const clearance = 0.5;
+      // BE expects INCH or CM (uppercase)
+      const apiUnit = unit === 'cm' ? 'CM' : 'INCH';
 
-    const reqL = lVal * factor + clearance;
-    const reqW = wVal * factor + clearance;
-    const reqH = hVal * factor + clearance;
+      try {
+        const res = await fetch(BOX_FINDER_PROXY, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product: { length: lVal, width: wVal, height: hVal, unit: apiUnit },
+            requirements: { quantity: qty },
+            preferences: { priority: 'BALANCED' },
+            limit: 3,
+          }),
+        });
 
-    const bestBox = findBestBox(reqL, reqW, reqH);
-    setRecommendation(bestBox);
-    setShowResult(true);
-  };
+        const json = await res.json();
+
+        if (!res.ok || !json.success) {
+          throw new Error(json.error?.message || 'No recommendation found');
+        }
+
+        setRecommendations(json.data || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [dims, unit]
+  );
 
   const handleReset = () => {
     setStep(1);
     setCategory(null);
     setDims({ l: '', w: '', h: '' });
     setShowResult(false);
-    setRecommendation(null);
+    setRecommendations([]);
+    setError(null);
     setQuantity(1000);
   };
 
-  const recPrice = recommendation
-    ? getPriceForQuantity(recommendation, quantity)
-    : 0;
-  const totalPrice = recommendation
-    ? (recPrice * quantity).toLocaleString('en-IN')
-    : '0';
+  // Top recommendation for the card display
+  const topRec = recommendations[0] ?? null;
 
   return (
     <section id="box-finder" className="section-padding bg-white">
@@ -143,8 +141,8 @@ export default function BoxFinder() {
             Not sure which box you need?
           </h2>
           <p className="text-text-secondary text-lg max-w-xl mx-auto">
-            Tell us what you&apos;re shipping. We&apos;ll help you find the
-            right fit.
+            Tell us what you&apos;re shipping. We&apos;ll find the perfect fit
+            from our live catalogue.
           </p>
         </motion.div>
 
@@ -159,7 +157,7 @@ export default function BoxFinder() {
                     : 'bg-warm-gray text-text-tertiary'
                 }`}
               >
-                {s}
+                {step > s ? <Icon name="Check" size={14} /> : s}
               </div>
               {s < 3 && (
                 <div
@@ -175,7 +173,7 @@ export default function BoxFinder() {
         {/* Steps */}
         <div className="max-w-3xl mx-auto">
           <AnimatePresence mode="wait">
-            {/* Step 1: Category */}
+            {/* ── Step 1: Category ── */}
             {step === 1 && (
               <motion.div
                 key="step1"
@@ -210,7 +208,7 @@ export default function BoxFinder() {
               </motion.div>
             )}
 
-            {/* Step 2: Dimensions */}
+            {/* ── Step 2: Dimensions ── */}
             {step === 2 && (
               <motion.div
                 key="step2"
@@ -225,6 +223,7 @@ export default function BoxFinder() {
                 </h3>
 
                 <div className="card-bk p-6 max-w-md mx-auto">
+                  {/* Unit toggle */}
                   <div className="flex justify-center gap-2 mb-6">
                     {['cm', 'inch'].map((u) => (
                       <button
@@ -251,6 +250,7 @@ export default function BoxFinder() {
                     ))}
                   </div>
 
+                  {/* Dimension inputs */}
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     {[
                       { key: 'l', label: 'Length' },
@@ -299,7 +299,7 @@ export default function BoxFinder() {
               </motion.div>
             )}
 
-            {/* Step 3: Quantity & Result */}
+            {/* ── Step 3: Quantity & Result ── */}
             {step === 3 && (
               <motion.div
                 key="step3"
@@ -344,13 +344,32 @@ export default function BoxFinder() {
                     </div>
                   </div>
                 ) : (
-                  /* Recommendation Result */
+                  /* Result panel */
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                   >
-                    {!recommendation ? (
+                    {/* Loading */}
+                    {isLoading && (
+                      <div className="card-bk p-10 max-w-md mx-auto text-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1,
+                            ease: 'linear',
+                          }}
+                          className="w-10 h-10 border-4 border-kraft border-t-transparent rounded-full mx-auto mb-4"
+                        />
+                        <p className="text-text-secondary font-medium">
+                          Finding the best box for you…
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Error */}
+                    {!isLoading && error && (
                       <div className="card-bk p-8 max-w-md mx-auto text-center">
                         <Icon
                           name="Package"
@@ -374,12 +393,15 @@ export default function BoxFinder() {
                           >
                             Try different dimensions
                           </button>
-                          <Link href="/custom-packaging" className="btn-accent">
+                          <Link href="/bulk-orders" className="btn-accent">
                             Custom Quote
                           </Link>
                         </div>
                       </div>
-                    ) : (
+                    )}
+
+                    {/* Success: show top recommendation */}
+                    {!isLoading && !error && topRec && (
                       <>
                         <h3 className="text-lg font-semibold text-charcoal text-center mb-6 flex items-center justify-center gap-2">
                           <Icon
@@ -391,34 +413,88 @@ export default function BoxFinder() {
                         </h3>
 
                         <div className="card-bk p-6 max-w-md mx-auto">
+                          {/* Product header */}
                           <div className="flex items-start gap-4 mb-4">
-                            <div className="w-16 h-16 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0">
-                              <Icon
-                                name="Package"
-                                size={28}
-                                className="text-kraft"
-                              />
+                            <div className="w-16 h-16 bg-kraft-muted rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
+                              {topRec.product.image ? (
+                                <img
+                                  src={topRec.product.image}
+                                  alt={topRec.product.name}
+                                  className="w-full h-full object-contain mix-blend-multiply"
+                                />
+                              ) : (
+                                <Icon
+                                  name="Package"
+                                  size={28}
+                                  className="text-kraft"
+                                />
+                              )}
                             </div>
                             <div>
                               <p className="text-xs text-text-tertiary mb-0.5">
-                                {recommendation.dimensions}
+                                {topRec.product.dimensions}
                               </p>
-                              <p className="font-bold text-charcoal text-lg">
-                                {recommendation.name}
+                              <p className="font-bold text-charcoal text-lg leading-tight">
+                                {topRec.product.name}
                               </p>
                               <p className="text-sm text-text-secondary">
-                                {recommendation.ply} Corrugated Box
+                                {topRec.product.ply}-Ply ·{' '}
+                                {topRec.product.material}
                               </p>
                             </div>
                           </div>
 
+                          {/* Score badge */}
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="flex-1 bg-warm-gray rounded-full h-1.5">
+                              <div
+                                className="bg-accent h-1.5 rounded-full transition-all"
+                                style={{
+                                  width: `${Math.min(topRec.score, 100)}%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-xs font-semibold text-accent">
+                              {Math.round(topRec.score)}% match
+                            </span>
+                          </div>
+
+                          {/* Fit info */}
+                          <div className="flex gap-2 flex-wrap mb-4">
+                            <span className="inline-flex items-center gap-1 text-xs bg-accent-light/30 text-accent-dark px-2.5 py-1 rounded-full font-medium">
+                              <Icon name="CheckCircle" size={12} />
+                              Best Fit
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-xs bg-warm-gray text-text-secondary px-2.5 py-1 rounded-full">
+                              <Icon name="Maximize2" size={12} />
+                              {Math.round(topRec.utilization * 100)}%
+                              utilization
+                            </span>
+                            <span
+                              className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full ${
+                                topRec.inventory.status === 'AVAILABLE'
+                                  ? 'bg-green-50 text-green-700'
+                                  : 'bg-amber-50 text-amber-700'
+                              }`}
+                            >
+                              <Icon name="Warehouse" size={12} />
+                              {topRec.inventory.status === 'AVAILABLE'
+                                ? 'In Stock'
+                                : 'Low Stock'}
+                            </span>
+                          </div>
+
+                          {/* Pricing summary */}
                           <div className="bg-warm-gray rounded-xl p-4 mb-4 space-y-2">
                             <div className="flex justify-between text-sm">
                               <span className="text-text-secondary">
                                 Price per piece
                               </span>
                               <span className="font-semibold text-charcoal">
-                                ₹{recPrice.toFixed(2)}
+                                ₹
+                                {(topRec.pricing.unitPriceMinor / 100).toFixed(
+                                  2
+                                )}
                               </span>
                             </div>
                             <div className="flex justify-between text-sm">
@@ -432,7 +508,7 @@ export default function BoxFinder() {
                             <div className="flex justify-between text-sm">
                               <span className="text-text-secondary">MOQ</span>
                               <span className="font-semibold text-charcoal">
-                                {recommendation.moq}
+                                {topRec.product.ply >= 5 ? 50 : 100} pcs
                               </span>
                             </div>
                             <div className="border-t border-border pt-2 mt-2 flex justify-between">
@@ -440,14 +516,48 @@ export default function BoxFinder() {
                                 Estimated Total
                               </span>
                               <span className="font-bold text-lg text-charcoal">
-                                ₹{totalPrice}
+                                ₹
+                                {(
+                                  (topRec.pricing.unitPriceMinor / 100) *
+                                  quantity
+                                ).toLocaleString('en-IN')}
                               </span>
                             </div>
                           </div>
 
+                          {/* Alternatives */}
+                          {recommendations.length > 1 && (
+                            <div className="mb-4">
+                              <p className="text-xs font-medium text-text-secondary mb-2">
+                                Also consider:
+                              </p>
+                              <div className="space-y-1.5">
+                                {recommendations.slice(1).map((rec) => (
+                                  <Link
+                                    key={rec.product.id}
+                                    href={`/products/${rec.product.slug}`}
+                                    className="flex items-center justify-between p-2.5 rounded-lg bg-warm-gray hover:bg-border transition-colors text-sm"
+                                  >
+                                    <span className="font-medium text-charcoal">
+                                      {rec.product.name}
+                                    </span>
+                                    <span className="text-text-secondary">
+                                      ₹
+                                      {(
+                                        rec.pricing.unitPriceMinor / 100
+                                      ).toFixed(2)}
+                                      /pc
+                                    </span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* CTAs */}
                           <div className="flex gap-3">
                             <Link
-                              href={`/products/${recommendation.slug}`}
+                              href={`/products/${topRec.product.slug}`}
                               className="btn-accent flex-1 text-center"
                             >
                               Buy This Box

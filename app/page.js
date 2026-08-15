@@ -13,21 +13,38 @@ import ReorderSection from '@/components/account/ReorderSection';
 import Testimonials from '@/components/home/Testimonials';
 import FAQ from '@/components/home/FAQ';
 import FinalCTA from '@/components/home/FinalCTA';
+import {
+  fetchCategories,
+  fetchPopularProducts,
+  fetchBulkPricingProducts,
+} from '@/lib/api';
+import { normalizeCategories, normalizeProducts } from '@/lib/normalizeProduct';
 
 /**
  * BoxKart Homepage — assembles all 14 sections in order.
- * (Announcement bar + Header + Footer are in the layout.)
+ * Server Component: fetches categories and popular products at render time
+ * for SEO-friendly SSR. Client-interactive sections remain CSR.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const [rawCategories, rawProducts, rawBulkProducts] = await Promise.all([
+    fetchCategories(),
+    fetchPopularProducts(),
+    fetchBulkPricingProducts(),
+  ]);
+
+  const categories = normalizeCategories(rawCategories);
+  const popularProducts = normalizeProducts(rawProducts);
+  const bulkPricingProducts = normalizeProducts(rawBulkProducts);
+
   return (
     <>
       <Hero />
       <TrustIndicators />
       <BoxFinder />
-      <CategorySection />
+      <CategorySection categories={categories} />
       <ShopBySize />
-      <PopularBoxes />
-      <BulkPricing />
+      <PopularBoxes products={popularProducts} />
+      <BulkPricing products={bulkPricingProducts} />
       <WhyBoxKart />
       <CustomPackaging />
       <PackagingBundles />
