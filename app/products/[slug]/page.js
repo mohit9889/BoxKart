@@ -4,12 +4,13 @@ import { useState, use, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { products, getPriceForQuantity } from '@/data/products';
+import { getPriceForQuantity } from '@/data/products';
+import { catalogApi } from '@/lib/api/catalog';
 import { useCart } from '@/lib/cart';
 import { getUpsellPrompt } from '@/lib/pricing';
 import BoxBlueprint from '@/components/product/BoxBlueprint';
 import PincodeChecker from '@/components/product/PincodeChecker';
-import { ErrorState } from '@/components/ui';
+import { ErrorState, Skeleton } from '@/components/ui';
 import Icon from '@/components/common/Icon';
 
 /**
@@ -20,25 +21,56 @@ export default function ProductDetailPage({ params }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const resolvedParams = use(params);
-  const product = products.find((p) => p.slug === resolvedParams.slug);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { addItem } = useCart();
-  const [selectedQty, setSelectedQty] = useState(
-    product?.pricingTiers?.[0]?.qty ?? 100
-  );
+  const [selectedQty, setSelectedQty] = useState(100);
   const [added, setAdded] = useState(false);
   const [showBulkQuote, setShowBulkQuote] = useState(false);
 
-  /**
-   * If ?qty= is in the URL (e.g. from BulkPricing section),
-   * pre-select that tier if it exists, otherwise keep the first tier.
-   */
+  const qtyParamStr = searchParams.get('qty');
+
   useEffect(() => {
-    if (!product) return;
-    const qtyParam = parseInt(searchParams.get('qty'), 10);
-    if (!qtyParam) return;
-    const matchingTier = product.pricingTiers?.find((t) => t.qty === qtyParam);
-    if (matchingTier) startTransition(() => setSelectedQty(matchingTier.qty));
-  }, [searchParams, product]);
+    const fetchProduct = async () => {
+      try {
+        const response = await catalogApi.getProductBySlug(resolvedParams.slug);
+        const p = response.data;
+        setProduct(p);
+
+        // If ?qty= is in the URL, pre-select that tier if it exists, otherwise keep the first tier
+        const qtyParam = parseInt(qtyParamStr, 10);
+        const defaultQty = p?.pricingTiers?.[0]?.qty ?? 100;
+
+        if (qtyParam && p.pricingTiers?.find((t) => t.qty === qtyParam)) {
+          setSelectedQty(qtyParam);
+        } else {
+          setSelectedQty(defaultQty);
+        }
+      } catch (error) {
+        console.error('Failed to fetch product', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [resolvedParams.slug, qtyParamStr]);
+
+  if (loading) {
+    return (
+      <div className="container-bk section-padding pb-32 md:pb-16 flex flex-col gap-8">
+        <Skeleton variant="text" width="200px" height="20px" />
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+          <Skeleton variant="card" height="400px" />
+          <div className="space-y-4">
+            <Skeleton variant="text" width="60%" height="40px" />
+            <Skeleton variant="text" width="40%" height="20px" />
+            <Skeleton variant="text" width="80%" height="100px" />
+            <Skeleton variant="card" height="150px" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (

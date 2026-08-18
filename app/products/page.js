@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { products } from '@/data/products';
 import { categories } from '@/data/categories';
+import { catalogApi } from '@/lib/api/catalog';
 import ProductCard from '@/components/product/ProductCard';
 import { EmptyState, Skeleton } from '@/components/ui';
 import Icon from '@/components/common/Icon';
@@ -33,83 +33,30 @@ function ProductsPageContent() {
   const [sortBy, setSortBy] = useState('popular');
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    // Search filter
-    if (searchQuery) {
-      const lower = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(lower) ||
-          p.category.includes(lower) ||
-          p.description.toLowerCase().includes(lower) ||
-          p.useCases.some((uc) => uc.toLowerCase().includes(lower))
-      );
-    }
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const params = {};
+        if (selectedCategory) params.category = selectedCategory;
+        if (selectedPly) params.ply = selectedPly;
+        if (searchQuery) params.q = searchQuery;
+        if (sizeFilter) params.size = sizeFilter;
+        if (sortBy) params.sort = sortBy;
+        params.limit = 50; // Get a large enough chunk or implement pagination later
 
-    // Category filter
-    if (selectedCategory) {
-      result = result.filter((p) => p.category === selectedCategory);
-    }
-
-    // Ply filter
-    if (selectedPly) {
-      result = result.filter((p) => p.ply === selectedPly);
-    }
-
-    // Size filter from URL
-    if (sizeFilter) {
-      result = result.filter((p) => {
-        if (!p.length || !p.width || !p.height) return false;
-        const maxDim = Math.max(p.length, p.width, p.height);
-        if (sizeFilter === 'small') return maxDim <= 8;
-        if (sizeFilter === 'medium') return maxDim > 8 && maxDim <= 12;
-        if (sizeFilter === 'large') return maxDim > 12;
-        return true;
-      });
-    }
-
-    // Sort
-    switch (sortBy) {
-      case 'price-asc':
-        result.sort(
-          (a, b) =>
-            (a.pricingTiers?.[0]?.price || 0) -
-            (b.pricingTiers?.[0]?.price || 0)
-        );
-        break;
-      case 'price-desc':
-        result.sort(
-          (a, b) =>
-            (b.pricingTiers?.[0]?.price || 0) -
-            (a.pricingTiers?.[0]?.price || 0)
-        );
-        break;
-      case 'best-value': {
-        // Sort by lowest price at highest tier (best per-unit discount)
-        result.sort((a, b) => {
-          const aMin = Math.min(
-            ...(a.pricingTiers?.map((t) => t.price) || [999])
-          );
-          const bMin = Math.min(
-            ...(b.pricingTiers?.map((t) => t.price) || [999])
-          );
-          return aMin - bMin;
-        });
-        break;
+        const response = await catalogApi.getProducts(params);
+        setProducts(response.data || []);
+      } catch (error) {
+        console.error('Failed to fetch products', error);
+      } finally {
+        setLoading(false);
       }
-      case 'moq-asc':
-        result.sort((a, b) => (a.moq || 100) - (b.moq || 100));
-        break;
-      case 'name':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      default:
-        break;
-    }
-
-    return result;
+    };
+    fetchProducts();
   }, [selectedCategory, selectedPly, sortBy, searchQuery, sizeFilter]);
 
   const clearFilters = () => {
@@ -132,8 +79,9 @@ function ProductsPageContent() {
               : 'All Packaging Products'}
         </h1>
         <p className="text-body">
-          {filteredProducts.length} product
-          {filteredProducts.length !== 1 ? 's' : ''} found
+          {loading
+            ? 'Loading products...'
+            : `${products.length} product${products.length !== 1 ? 's' : ''} found`}
         </p>
       </div>
 
@@ -249,9 +197,15 @@ function ProductsPageContent() {
           </div>
 
           {/* Product Grid */}
-          {filteredProducts.length > 0 ? (
+          {loading ? (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredProducts.map((product, i) => (
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} variant="card" height="320px" />
+              ))}
+            </div>
+          ) : products.length > 0 ? (
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {products.map((product, i) => (
                 <ProductCard key={product.id} product={product} index={i} />
               ))}
             </div>
@@ -374,7 +328,7 @@ function ProductsPageContent() {
                     onClick={() => setFiltersOpen(false)}
                     className="btn-accent flex-1"
                   >
-                    Apply ({filteredProducts.length})
+                    Apply ({products.length})
                   </button>
                 </div>
               </div>
