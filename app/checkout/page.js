@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCart } from '@/lib/cart';
 import { EmptyState } from '@/components/ui';
 import Icon from '@/components/common/Icon';
+import { orderApi } from '@/lib/api/order';
 
 const STEPS = [
   { id: 1, label: 'Contact', icon: 'User' },
@@ -48,15 +49,38 @@ export default function CheckoutPage() {
       maximumFractionDigits: 0,
     }).format(num);
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setSubmitting(true);
-    setTimeout(() => {
-      const generatedOrderId = `#BK${Math.floor(Math.random() * 9000 + 1000)}`;
-      setOrderId(generatedOrderId);
-      setSubmitting(false);
+    try {
+      // Map contact and address to expected BE format
+      const shippingAddress = {
+        fullName: contact.name,
+        phone: contact.phone,
+        email: contact.email,
+        line1: address.line1,
+        line2: address.line2,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+        type: 'SHIPPING',
+      };
+
+      // Call API
+      const response = await orderApi.createOrder({
+        shippingAddress,
+      });
+
+      setOrderId(
+        response?.data?.orderNumber || response?.data?.id || 'Confirmed'
+      );
       setOrderPlaced(true);
       clearCart();
-    }, 2000);
+    } catch (error) {
+      console.error('Failed to place order', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (items.length === 0 && !orderPlaced) {

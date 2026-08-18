@@ -176,6 +176,11 @@ export default function Header() {
                       onClick={handleLogout}
                       className="px-4 py-2.5 text-sm font-medium text-[var(--color-danger)] hover:bg-[var(--color-danger-light)] transition-colors flex items-center gap-2 text-left w-full border-t border-[#e8e4de]"
                     >
+                      <Icon
+                        name="LogOut"
+                        size={16}
+                        className="text-[var(--color-danger)]"
+                      />{' '}
                       Logout
                     </button>
                   </div>

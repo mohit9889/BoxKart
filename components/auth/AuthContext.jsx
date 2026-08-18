@@ -24,7 +24,14 @@ export const AuthProvider = ({ children }) => {
         const { csrfToken } = await authApi.fetchCsrfToken();
         setGlobalCsrfToken(csrfToken);
 
-        // 2. Try fetching current user
+        // 2. Try fetching current user ONLY if we think there's a session
+        const hasSession = localStorage.getItem('has_session');
+        if (!hasSession) {
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+
         try {
           const currentUser = await authApi.getCurrentUser();
           setUser(currentUser);
@@ -36,6 +43,7 @@ export const AuthProvider = ({ children }) => {
               const currentUser = await authApi.getCurrentUser();
               setUser(currentUser);
             } catch (refreshErr) {
+              localStorage.removeItem('has_session');
               setUser(null);
             }
           } else {
@@ -55,12 +63,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const userData = await authApi.login(email, password);
+    localStorage.setItem('has_session', 'true');
     setUser(userData);
     return userData;
   };
 
   const signup = async (data) => {
     const userData = await authApi.signup(data);
+    localStorage.setItem('has_session', 'true');
     setUser(userData);
     return userData;
   };
@@ -71,6 +81,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Logout error', err);
     } finally {
+      localStorage.removeItem('has_session');
       setUser(null);
     }
   };
