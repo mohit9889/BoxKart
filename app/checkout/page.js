@@ -1,18 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart';
 import { EmptyState } from '@/components/ui';
 import Icon from '@/components/common/Icon';
 import { orderApi } from '@/lib/api/order';
+import { addressApi } from '@/lib/api/address';
+import { authApi } from '@/lib/api/auth';
 import {
   validateEmail,
   validatePhone,
   validatePincode,
   validateRequired,
 } from '@/lib/validation';
+import { INDIAN_STATES } from '@/lib/constants';
 
 const STEPS = [
   { id: 1, label: 'Contact', icon: 'User' },
@@ -25,6 +29,7 @@ const STEPS = [
  * 4-step checkout flow: Contact → Address → Summary → Payment placeholder.
  */
 export default function CheckoutPage() {
+  const router = useRouter();
   const { items, subtotal, shipping, gst, totalPrice, clearCart } = useCart();
   const [step, setStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -46,7 +51,66 @@ export default function CheckoutPage() {
     city: '',
     state: '',
     pincode: '',
+    labelType: 'Home',
+    customLabel: '',
   });
+
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('');
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoadingAddresses(true);
+        let userEmail = '';
+        let userName = '';
+
+        // Fetch current user details
+        try {
+          const user = await authApi.getCurrentUser();
+          if (user && user.email) {
+            userEmail = user.email;
+            userName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+          }
+        } catch (e) {
+          console.error('Failed to fetch user, redirecting to login', e);
+          router.push('/login?redirect=/checkout');
+          return;
+        }
+
+        // Fetch addresses
+        const addrsRes = await addressApi.getAddresses();
+        const addrs = addrsRes.data?.addresses || [];
+        setSavedAddresses(addrs);
+
+        let finalName = userName;
+        let finalPhone = '';
+
+        if (addrs.length > 0) {
+          setSelectedAddressId(addrs[0].id);
+          finalName = userName || addrs[0].fullName;
+          finalPhone = addrs[0].phone;
+        } else {
+          setShowAddressForm(true);
+        }
+
+        setContact((prev) => ({
+          ...prev,
+          email: prev.email || userEmail,
+          name: prev.name || finalName,
+          phone: prev.phone || finalPhone,
+        }));
+      } catch (error) {
+        console.error('Failed to fetch data', error);
+        setShowAddressForm(true);
+      } finally {
+        setLoadingAddresses(false);
+      }
+    };
+    fetchData();
+  }, [router]);
 
   const formatPrice = (num) =>
     new Intl.NumberFormat('en-IN', {
@@ -81,38 +145,77 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleNextStep2 = () => {
+  const handleNextStep2 = async () => {
+    if (selectedAddressId && !showAddressForm) {
+      setStep(3);
+      return;
+    }
+
     const newErrors = {};
     newErrors.line1 = validateRequired(address.line1, 'Address Line 1');
     newErrors.city = validateRequired(address.city, 'City');
     newErrors.state = validateRequired(address.state, 'State');
     newErrors.pincode = validatePincode(address.pincode);
     setErrors(newErrors);
+
     if (!Object.values(newErrors).some((err) => err !== null)) {
-      setStep(3);
+      setSubmitting(true);
+      try {
+        const payload = {
+          label:
+            address.labelType === 'Other'
+              ? address.customLabel || 'Other'
+              : address.labelType,
+          fullName: contact.name,
+          phone: contact.phone,
+          addressLine1: address.line1,
+          addressLine2: address.line2,
+          city: address.city,
+          state: address.state,
+          postalCode: address.pincode,
+          isDefault: true,
+        };
+        const res = await addressApi.addAddress(payload);
+        if (res.data && res.data.address) {
+          const addrsRes = await addressApi.getAddresses();
+          setSavedAddresses(addrsRes.data?.addresses || []);
+          setSelectedAddressId(res.data.address.id);
+          setShowAddressForm(false);
+        }
+      } catch (err) {
+        console.error('Failed to save new address', err);
+        // Continue anyway if the save failed but the data is valid
+      } finally {
+        setSubmitting(false);
+        setStep(3);
+      }
     }
   };
 
   const handlePlaceOrder = async () => {
     setSubmitting(true);
     try {
-      // Map contact and address to expected BE format
-      const shippingAddress = {
-        fullName: contact.name,
-        phone: contact.phone,
-        email: contact.email,
-        line1: address.line1,
-        line2: address.line2,
-        city: address.city,
-        state: address.state,
-        pincode: address.pincode,
-        type: 'SHIPPING',
-      };
+      let payload = {};
+      if (selectedAddressId && !showAddressForm) {
+        payload = { shippingAddressId: selectedAddressId };
+      } else {
+        payload = {
+          shippingAddress: {
+            fullName: contact.name,
+            phone: contact.phone,
+            email: contact.email,
+            line1: address.line1,
+            line2: address.line2,
+            city: address.city,
+            state: address.state,
+            pincode: address.pincode,
+            type: 'SHIPPING',
+          },
+        };
+      }
 
       // Call API
-      const response = await orderApi.createOrder({
-        shippingAddress,
-      });
+      const response = await orderApi.createOrder(payload);
 
       setOrderId(
         response?.data?.orderNumber || response?.data?.id || 'Confirmed'
@@ -302,17 +405,18 @@ export default function CheckoutPage() {
                     <input
                       id="co-phone"
                       type="tel"
-                      className="input-bk"
+                      className="input-bk w-full"
+                      placeholder="10-digit mobile number"
                       value={contact.phone}
                       onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '');
-                        if (val.length <= 10) {
-                          setContact({ ...contact, phone: val });
+                        const val = e.target.value
+                          .replace(/\D/g, '')
+                          .slice(0, 10);
+                        setContact({ ...contact, phone: val });
+                        if (errors.phone) {
+                          setErrors({ ...errors, phone: validatePhone(val) });
                         }
                       }}
-                      required
-                      placeholder="9876543210"
-                      maxLength={10}
                       onBlur={() => handleBlur('phone')}
                     />
                     {errors.phone && (
@@ -375,121 +479,337 @@ export default function CheckoutPage() {
                 Delivery Address
               </h2>
               <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="ad-line1"
-                    className="block text-sm font-medium text-text-secondary mb-1"
-                  >
-                    Address Line 1 *
-                  </label>
-                  <input
-                    id="ad-line1"
-                    className="input-bk"
-                    value={address.line1}
-                    onChange={(e) =>
-                      setAddress({ ...address, line1: e.target.value })
-                    }
-                    required
-                    placeholder="Building, Street"
-                    onBlur={() => handleBlur('line1')}
-                  />
-                  {errors.line1 && (
-                    <p className="text-xs text-red-500 mt-1">{errors.line1}</p>
-                  )}
-                </div>
-                <div>
-                  <label
-                    htmlFor="ad-line2"
-                    className="block text-sm font-medium text-text-secondary mb-1"
-                  >
-                    Address Line 2
-                  </label>
-                  <input
-                    id="ad-line2"
-                    className="input-bk"
-                    value={address.line2}
-                    onChange={(e) =>
-                      setAddress({ ...address, line2: e.target.value })
-                    }
-                    placeholder="Area, Landmark"
-                  />
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label
-                      htmlFor="ad-city"
-                      className="block text-sm font-medium text-text-secondary mb-1"
-                    >
-                      City *
-                    </label>
-                    <input
-                      id="ad-city"
-                      className="input-bk"
-                      value={address.city}
-                      onChange={(e) =>
-                        setAddress({ ...address, city: e.target.value })
-                      }
-                      required
-                      placeholder="Mumbai"
-                      onBlur={() => handleBlur('city')}
+                {loadingAddresses ? (
+                  <div className="flex justify-center p-8">
+                    <Icon
+                      name="Loader2"
+                      size={24}
+                      className="animate-spin text-kraft"
                     />
-                    {errors.city && (
-                      <p className="text-xs text-red-500 mt-1">{errors.city}</p>
-                    )}
                   </div>
-                  <div>
-                    <label
-                      htmlFor="ad-state"
-                      className="block text-sm font-medium text-text-secondary mb-1"
+                ) : !showAddressForm && savedAddresses.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {savedAddresses.map((addr) => (
+                        <div
+                          key={addr.id}
+                          onClick={() => setSelectedAddressId(addr.id)}
+                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedAddressId === addr.id ? 'border-accent bg-accent/5' : 'border-border hover:border-kraft-muted bg-white'}`}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="font-semibold text-charcoal">
+                              {addr.fullName}
+                            </span>
+                            {selectedAddressId === addr.id && (
+                              <Icon
+                                name="CheckCircle"
+                                size={18}
+                                className="text-accent"
+                              />
+                            )}
+                          </div>
+                          <p className="text-sm text-text-secondary">
+                            {addr.addressLine1}
+                          </p>
+                          {addr.addressLine2 && (
+                            <p className="text-sm text-text-secondary">
+                              {addr.addressLine2}
+                            </p>
+                          )}
+                          <p className="text-sm text-text-secondary">
+                            {addr.city}, {addr.state} {addr.postalCode}
+                          </p>
+                          <p className="text-sm text-text-tertiary mt-2 flex items-center gap-1">
+                            <Icon name="Phone" size={14} /> {addr.phone}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setShowAddressForm(true)}
+                      className="text-sm font-medium text-accent hover:text-accent-dark flex items-center gap-1 mt-2"
                     >
-                      State *
-                    </label>
-                    <input
-                      id="ad-state"
-                      className="input-bk"
-                      value={address.state}
-                      onChange={(e) =>
-                        setAddress({ ...address, state: e.target.value })
-                      }
-                      required
-                      placeholder="Maharashtra"
-                      onBlur={() => handleBlur('state')}
-                    />
-                    {errors.state && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {errors.state}
-                      </p>
-                    )}
+                      <Icon name="Plus" size={16} /> Add New Address
+                    </button>
                   </div>
-                  <div>
-                    <label
-                      htmlFor="ad-pin"
-                      className="block text-sm font-medium text-text-secondary mb-1"
-                    >
-                      Pincode *
-                    </label>
-                    <input
-                      id="ad-pin"
-                      className="input-bk"
-                      value={address.pincode}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '');
-                        if (val.length <= 6) {
-                          setAddress({ ...address, pincode: val });
+                ) : (
+                  <>
+                    {savedAddresses.length > 0 && (
+                      <button
+                        onClick={() => setShowAddressForm(false)}
+                        className="text-sm font-medium text-text-tertiary hover:text-charcoal flex items-center gap-1 mb-4"
+                      >
+                        <Icon name="ArrowLeft" size={16} /> Use Saved Address
+                      </button>
+                    )}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-text-secondary mb-2">
+                        Save as (Label) *
+                      </label>
+                      <div className="flex gap-3 mb-3">
+                        {['Home', 'Office', 'Other'].map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() =>
+                              setAddress({ ...address, labelType: type })
+                            }
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${address.labelType === type ? 'bg-charcoal text-white border-charcoal' : 'bg-white text-text-secondary border-border hover:border-kraft'}`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                      {address.labelType === 'Other' && (
+                        <input
+                          className="input-bk w-full"
+                          placeholder="e.g. Friend's House"
+                          value={address.customLabel}
+                          onChange={(e) =>
+                            setAddress({
+                              ...address,
+                              customLabel: e.target.value,
+                            })
+                          }
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="ad-line1"
+                        className="block text-sm font-medium text-text-secondary mb-1"
+                      >
+                        Address Line 1 *
+                      </label>
+                      <input
+                        id="ad-line1"
+                        className="input-bk"
+                        value={address.line1}
+                        onChange={(e) =>
+                          setAddress({ ...address, line1: e.target.value })
                         }
-                      }}
-                      required
-                      placeholder="400001"
-                      maxLength={6}
-                      onBlur={() => handleBlur('pincode')}
-                    />
-                    {errors.pincode && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {errors.pincode}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                        required
+                        placeholder="Building, Street"
+                        onBlur={() => handleBlur('line1')}
+                      />
+                      {errors.line1 && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.line1}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="ad-line2"
+                        className="block text-sm font-medium text-text-secondary mb-1"
+                      >
+                        Address Line 2
+                      </label>
+                      <input
+                        id="ad-line2"
+                        className="input-bk"
+                        value={address.line2}
+                        onChange={(e) =>
+                          setAddress({ ...address, line2: e.target.value })
+                        }
+                        placeholder="Area, Landmark"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label
+                          htmlFor="ad-city"
+                          className="block text-sm font-medium text-text-secondary mb-1"
+                        >
+                          City *
+                        </label>
+                        <input
+                          id="ad-city"
+                          className="input-bk"
+                          value={address.city}
+                          onChange={(e) =>
+                            setAddress({ ...address, city: e.target.value })
+                          }
+                          required
+                          placeholder="Mumbai"
+                          onBlur={() => handleBlur('city')}
+                        />
+                        {errors.city && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {errors.city}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="ad-state"
+                          className="block text-sm font-medium text-text-secondary mb-1"
+                        >
+                          State *
+                        </label>
+                        <select
+                          id="ad-state"
+                          className="input-bk appearance-none w-full"
+                          value={address.state}
+                          onChange={(e) =>
+                            setAddress({ ...address, state: e.target.value })
+                          }
+                          required
+                          onBlur={() => handleBlur('state')}
+                        >
+                          <option value="">Select State</option>
+                          {INDIAN_STATES.map((state) => (
+                            <option key={state} value={state}>
+                              {state}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.state && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {errors.state}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="ad-pin"
+                          className="block text-sm font-medium text-text-secondary mb-1"
+                        >
+                          Pincode *
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="co-pincode"
+                            type="text"
+                            className="input-bk w-full pr-10"
+                            value={address.pincode}
+                            onChange={async (e) => {
+                              const val = e.target.value
+                                .replace(/\D/g, '')
+                                .slice(0, 6);
+                              setAddress({ ...address, pincode: val });
+                              if (errors.pincode) {
+                                setErrors({
+                                  ...errors,
+                                  pincode: validatePincode(val),
+                                });
+                              }
+                              if (val.length === 6) {
+                                try {
+                                  const res = await fetch(
+                                    `https://api.postalpincode.in/pincode/${val}`
+                                  );
+                                  const data = await res.json();
+                                  if (data && data[0]?.Status === 'Success') {
+                                    const postOffice = data[0].PostOffice[0];
+                                    setAddress((prev) => ({
+                                      ...prev,
+                                      pincode: val,
+                                      city: postOffice.District,
+                                      state: postOffice.State,
+                                    }));
+                                  }
+                                } catch (err) {
+                                  console.error(
+                                    'Failed to fetch pincode details',
+                                    err
+                                  );
+                                }
+                              }
+                            }}
+                            required
+                            placeholder="400001"
+                            maxLength={6}
+                            onBlur={() => handleBlur('pincode')}
+                          />
+                          <button
+                            type="button"
+                            title="Detect My Location"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-kraft hover:text-charcoal transition-colors"
+                            onClick={() => {
+                              if (!navigator.geolocation) {
+                                alert(
+                                  'Geolocation is not supported by your browser'
+                                );
+                                return;
+                              }
+                              navigator.geolocation.getCurrentPosition(
+                                async (position) => {
+                                  try {
+                                    const { latitude, longitude } =
+                                      position.coords;
+                                    const geoRes = await fetch(
+                                      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                                    );
+                                    const geoData = await geoRes.json();
+
+                                    if (
+                                      geoData &&
+                                      geoData.address &&
+                                      geoData.address.postcode
+                                    ) {
+                                      const pin = geoData.address.postcode
+                                        .replace(/\D/g, '')
+                                        .slice(0, 6);
+                                      setAddress((prev) => ({
+                                        ...prev,
+                                        pincode: pin,
+                                      }));
+
+                                      // Also fetch city/state automatically
+                                      if (pin.length === 6) {
+                                        const res = await fetch(
+                                          `https://api.postalpincode.in/pincode/${pin}`
+                                        );
+                                        const data = await res.json();
+                                        if (
+                                          data &&
+                                          data[0]?.Status === 'Success'
+                                        ) {
+                                          const postOffice =
+                                            data[0].PostOffice[0];
+                                          setAddress((prev) => ({
+                                            ...prev,
+                                            pincode: pin,
+                                            city: postOffice.District,
+                                            state: postOffice.State,
+                                          }));
+                                        }
+                                      }
+                                    } else {
+                                      alert(
+                                        'Could not detect pincode for your location'
+                                      );
+                                    }
+                                  } catch (err) {
+                                    console.error(
+                                      'Failed to fetch location details',
+                                      err
+                                    );
+                                    alert('Failed to detect location details');
+                                  }
+                                },
+                                (error) => {
+                                  console.error('Geolocation error', error);
+                                  alert(
+                                    'Failed to access your location. Please check your browser permissions.'
+                                  );
+                                }
+                              );
+                            }}
+                          >
+                            <Icon name="MapPin" size={18} />
+                          </button>
+                        </div>
+                        {errors.pincode && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {errors.pincode}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="flex justify-between mt-6">
                 <button
@@ -500,9 +820,19 @@ export default function CheckoutPage() {
                 </button>
                 <button
                   onClick={handleNextStep2}
-                  className="btn-accent flex items-center gap-2"
+                  disabled={submitting}
+                  className="btn-accent flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Continue <Icon name="ArrowRight" size={16} />
+                  {submitting ? (
+                    <>
+                      Saving Address{' '}
+                      <Icon name="Loader2" size={16} className="animate-spin" />
+                    </>
+                  ) : (
+                    <>
+                      Continue <Icon name="ArrowRight" size={16} />
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>
