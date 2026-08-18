@@ -6,11 +6,17 @@ import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthContext';
+import {
+  validateEmail,
+  validatePasswordStrong,
+  validateRequired,
+} from '@/lib/validation';
 
 export default function AuthForm({ initialMode = 'login' }) {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const router = useRouter();
   const { login, signup } = useAuth();
 
@@ -20,18 +26,43 @@ export default function AuthForm({ initialMode = 'login' }) {
     window.history.pushState(null, '', isLogin ? '/signup' : '/login');
   };
 
+  const handleBlur = (e) => {
+    const { id, value } = e.target;
+    let err = null;
+    if (id === 'name' && !isLogin) err = validateRequired(value, 'Full Name');
+    if (id === 'email') err = validateEmail(value);
+    if (id === 'password' && !isLogin) err = validatePasswordStrong(value);
+
+    setFieldErrors((prev) => ({ ...prev, [id]: err }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFieldErrors({});
+    setErrorMsg('');
+
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    const name = !isLogin ? e.target.name.value : null;
+
+    const newFieldErrors = {};
+    if (!isLogin) {
+      newFieldErrors.name = validateRequired(name, 'Full Name');
+      newFieldErrors.password = validatePasswordStrong(password);
+    }
+    newFieldErrors.email = validateEmail(email);
+
+    if (Object.values(newFieldErrors).some((err) => err !== null)) {
+      setFieldErrors(newFieldErrors);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const email = e.target.email.value;
-      const password = e.target.password.value;
-
       if (isLogin) {
         await login(email, password);
       } else {
-        const name = e.target.name.value;
         const [firstName, ...lastNames] = name.trim().split(' ');
         const lastName = lastNames.join(' ');
         await signup({ firstName, lastName, email, password });
@@ -121,8 +152,14 @@ export default function AuthForm({ initialMode = 'login' }) {
                       required={!isLogin}
                       className="w-full pl-10 pr-4 py-2.5 bg-[#faf8f5] border border-[#e8e4de] rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:border-[var(--color-kraft)] focus:ring-2 focus:ring-[var(--color-kraft-muted)] transition-all outline-none"
                       placeholder="John Doe"
+                      onBlur={handleBlur}
                     />
                   </div>
+                  {fieldErrors.name && (
+                    <p className="text-xs text-red-500 mt-1 pl-1">
+                      {fieldErrors.name}
+                    </p>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -144,8 +181,14 @@ export default function AuthForm({ initialMode = 'login' }) {
                   required
                   className="w-full pl-10 pr-4 py-2.5 bg-[#faf8f5] border border-[#e8e4de] rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:border-[var(--color-kraft)] focus:ring-2 focus:ring-[var(--color-kraft-muted)] transition-all outline-none"
                   placeholder="you@company.com"
+                  onBlur={handleBlur}
                 />
               </div>
+              {fieldErrors.email && (
+                <p className="text-xs text-red-500 mt-1 pl-1">
+                  {fieldErrors.email}
+                </p>
+              )}
             </motion.div>
 
             <motion.div layout="position" className="space-y-1">
@@ -175,8 +218,14 @@ export default function AuthForm({ initialMode = 'login' }) {
                   required
                   className="w-full pl-10 pr-4 py-2.5 bg-[#faf8f5] border border-[#e8e4de] rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:border-[var(--color-kraft)] focus:ring-2 focus:ring-[var(--color-kraft-muted)] transition-all outline-none"
                   placeholder="••••••••"
+                  onBlur={handleBlur}
                 />
               </div>
+              {fieldErrors.password && (
+                <p className="text-xs text-red-500 mt-1 pl-1">
+                  {fieldErrors.password}
+                </p>
+              )}
             </motion.div>
 
             <motion.div layout="position" className="pt-2">

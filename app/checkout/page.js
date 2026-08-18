@@ -7,6 +7,12 @@ import { useCart } from '@/lib/cart';
 import { EmptyState } from '@/components/ui';
 import Icon from '@/components/common/Icon';
 import { orderApi } from '@/lib/api/order';
+import {
+  validateEmail,
+  validatePhone,
+  validatePincode,
+  validateRequired,
+} from '@/lib/validation';
 
 const STEPS = [
   { id: 1, label: 'Contact', icon: 'User' },
@@ -24,6 +30,7 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [errors, setErrors] = useState({});
 
   const [contact, setContact] = useState({
     name: '',
@@ -48,6 +55,43 @@ export default function CheckoutPage() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(num);
+
+  const handleBlur = (field) => {
+    let err = null;
+    if (field === 'name') err = validateRequired(contact.name, 'Full Name');
+    if (field === 'email') err = validateEmail(contact.email);
+    if (field === 'phone') err = validatePhone(contact.phone);
+    if (field === 'line1')
+      err = validateRequired(address.line1, 'Address Line 1');
+    if (field === 'city') err = validateRequired(address.city, 'City');
+    if (field === 'state') err = validateRequired(address.state, 'State');
+    if (field === 'pincode') err = validatePincode(address.pincode);
+
+    setErrors((prev) => ({ ...prev, [field]: err }));
+  };
+
+  const handleNextStep1 = () => {
+    const newErrors = {};
+    newErrors.name = validateRequired(contact.name, 'Full Name');
+    newErrors.email = validateEmail(contact.email);
+    newErrors.phone = validatePhone(contact.phone);
+    setErrors(newErrors);
+    if (!Object.values(newErrors).some((err) => err !== null)) {
+      setStep(2);
+    }
+  };
+
+  const handleNextStep2 = () => {
+    const newErrors = {};
+    newErrors.line1 = validateRequired(address.line1, 'Address Line 1');
+    newErrors.city = validateRequired(address.city, 'City');
+    newErrors.state = validateRequired(address.state, 'State');
+    newErrors.pincode = validatePincode(address.pincode);
+    setErrors(newErrors);
+    if (!Object.values(newErrors).some((err) => err !== null)) {
+      setStep(3);
+    }
+  };
 
   const handlePlaceOrder = async () => {
     setSubmitting(true);
@@ -198,7 +242,11 @@ export default function CheckoutPage() {
                       }
                       required
                       placeholder="Your full name"
+                      onBlur={() => handleBlur('name')}
                     />
+                    {errors.name && (
+                      <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -236,7 +284,13 @@ export default function CheckoutPage() {
                       }
                       required
                       placeholder="you@company.com"
+                      onBlur={() => handleBlur('email')}
                     />
+                    {errors.email && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -250,12 +304,22 @@ export default function CheckoutPage() {
                       type="tel"
                       className="input-bk"
                       value={contact.phone}
-                      onChange={(e) =>
-                        setContact({ ...contact, phone: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        if (val.length <= 10) {
+                          setContact({ ...contact, phone: val });
+                        }
+                      }}
                       required
-                      placeholder="+91 98765 43210"
+                      placeholder="9876543210"
+                      maxLength={10}
+                      onBlur={() => handleBlur('phone')}
                     />
+                    {errors.phone && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -289,7 +353,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-end mt-6">
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={handleNextStep1}
                   className="btn-accent flex items-center gap-2"
                 >
                   Continue <Icon name="ArrowRight" size={16} />
@@ -327,7 +391,11 @@ export default function CheckoutPage() {
                     }
                     required
                     placeholder="Building, Street"
+                    onBlur={() => handleBlur('line1')}
                   />
+                  {errors.line1 && (
+                    <p className="text-xs text-red-500 mt-1">{errors.line1}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -363,7 +431,11 @@ export default function CheckoutPage() {
                       }
                       required
                       placeholder="Mumbai"
+                      onBlur={() => handleBlur('city')}
                     />
+                    {errors.city && (
+                      <p className="text-xs text-red-500 mt-1">{errors.city}</p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -381,7 +453,13 @@ export default function CheckoutPage() {
                       }
                       required
                       placeholder="Maharashtra"
+                      onBlur={() => handleBlur('state')}
                     />
+                    {errors.state && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.state}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -394,12 +472,22 @@ export default function CheckoutPage() {
                       id="ad-pin"
                       className="input-bk"
                       value={address.pincode}
-                      onChange={(e) =>
-                        setAddress({ ...address, pincode: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        if (val.length <= 6) {
+                          setAddress({ ...address, pincode: val });
+                        }
+                      }}
                       required
                       placeholder="400001"
+                      maxLength={6}
+                      onBlur={() => handleBlur('pincode')}
                     />
+                    {errors.pincode && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.pincode}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -411,7 +499,7 @@ export default function CheckoutPage() {
                   <Icon name="ArrowLeft" size={16} /> Back
                 </button>
                 <button
-                  onClick={() => setStep(3)}
+                  onClick={handleNextStep2}
                   className="btn-accent flex items-center gap-2"
                 >
                   Continue <Icon name="ArrowRight" size={16} />
