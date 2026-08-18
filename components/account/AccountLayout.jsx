@@ -24,7 +24,7 @@ const TABS = [
   },
   {
     id: 'profile',
-    label: 'Business Profile',
+    label: 'Profile',
     icon: 'Building2',
     href: '/account/profile',
   },

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { adminProductService } from '@/services/admin/product.service';
 import Icon from '@/components/common/Icon';
 import Link from 'next/link';
+import { validateRequired } from '@/lib/validation';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -20,8 +21,28 @@ export default function NewProductPage() {
     status: 'Active',
   });
 
+  const [formErrors, setFormErrors] = useState({});
+
+  const handleBlur = (field) => {
+    let err = null;
+    if (field === 'name') err = validateRequired(formData.name, 'Product Name');
+    if (field === 'sku') err = validateRequired(formData.sku, 'SKU');
+    if (field === 'price') err = validateRequired(formData.price, 'Price');
+
+    setFormErrors((prev) => ({ ...prev, [field]: err }));
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
+
+    const errors = {};
+    errors.name = validateRequired(formData.name, 'Product Name');
+    errors.sku = validateRequired(formData.sku, 'SKU');
+    errors.price = validateRequired(formData.price, 'Price');
+
+    setFormErrors(errors);
+    if (Object.values(errors).some((err) => err !== null)) return;
+
     setIsSaving(true);
     try {
       // Create product with mock service
@@ -63,15 +84,18 @@ export default function NewProductPage() {
               </label>
               <input
                 id="productName"
-                required
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
+                onBlur={() => handleBlur('name')}
                 type="text"
                 placeholder="e.g. Medium Shipping Box"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900"
+                className={`w-full px-4 py-2 border ${formErrors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-900'} rounded-lg outline-none`}
               />
+              {formErrors.name && (
+                <p className="text-xs text-red-500">{formErrors.name}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -83,15 +107,21 @@ export default function NewProductPage() {
               </label>
               <input
                 id="sku"
-                required
                 value={formData.sku}
                 onChange={(e) =>
-                  setFormData({ ...formData, sku: e.target.value })
+                  setFormData({
+                    ...formData,
+                    sku: e.target.value.toUpperCase(),
+                  })
                 }
+                onBlur={() => handleBlur('sku')}
                 type="text"
                 placeholder="e.g. BK-STD-05"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900 uppercase"
+                className={`w-full px-4 py-2 border ${formErrors.sku ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-900'} rounded-lg outline-none uppercase`}
               />
+              {formErrors.sku && (
+                <p className="text-xs text-red-500">{formErrors.sku}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -134,7 +164,6 @@ export default function NewProductPage() {
                 </span>
                 <input
                   id="price"
-                  required
                   value={formData.price}
                   onChange={(e) =>
                     setFormData({
@@ -142,11 +171,15 @@ export default function NewProductPage() {
                       price: `₹${e.target.value.replace(/[^0-9.]/g, '')}`,
                     })
                   }
+                  onBlur={() => handleBlur('price')}
                   type="text"
                   placeholder="0.00"
-                  className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-gray-900"
+                  className={`w-full pl-8 pr-4 py-2 border ${formErrors.price ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gray-900'} rounded-lg outline-none`}
                 />
               </div>
+              {formErrors.price && (
+                <p className="text-xs text-red-500">{formErrors.price}</p>
+              )}
             </div>
 
             <div className="space-y-2">

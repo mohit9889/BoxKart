@@ -5,14 +5,44 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import { useRouter } from 'next/navigation';
+import { validatePasswordStrong } from '@/lib/validation';
 
 export default function ResetPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
 
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(null);
+  const [confirmError, setConfirmError] = useState(null);
+
+  const handlePasswordBlur = () => {
+    setPasswordError(validatePasswordStrong(password));
+  };
+
+  const handleConfirmBlur = () => {
+    if (confirmPassword !== password) {
+      setConfirmError('Passwords do not match');
+    } else {
+      setConfirmError(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const pErr = validatePasswordStrong(password);
+    setPasswordError(pErr);
+
+    let cErr = null;
+    if (confirmPassword !== password) {
+      cErr = 'Passwords do not match';
+    }
+    setConfirmError(cErr);
+
+    if (pErr || cErr) return;
+
     setIsSubmitting(true);
     // Mock network request
     await new Promise((r) => setTimeout(r, 1500));
@@ -85,15 +115,20 @@ export default function ResetPasswordPage() {
                   <input
                     id="password"
                     type="password"
-                    required
-                    minLength={8}
-                    className="w-full pl-10 pr-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:border-[var(--color-kraft)] focus:ring-2 focus:ring-[var(--color-kraft-muted)] transition-all outline-none"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onBlur={handlePasswordBlur}
+                    className={`w-full pl-10 pr-4 py-3 bg-[#faf8f5] border ${passwordError ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:border-[var(--color-kraft)] focus:ring-[var(--color-kraft-muted)]'} rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:ring-2 transition-all outline-none`}
                     placeholder="••••••••"
                   />
                 </div>
-                <p className="text-xs text-[var(--color-text-tertiary)]">
-                  Must be at least 8 characters long.
-                </p>
+                {passwordError ? (
+                  <p className="text-xs text-red-500">{passwordError}</p>
+                ) : (
+                  <p className="text-xs text-[var(--color-text-tertiary)]">
+                    Must be at least 8 characters long.
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -110,12 +145,16 @@ export default function ResetPasswordPage() {
                   <input
                     id="confirmPassword"
                     type="password"
-                    required
-                    minLength={8}
-                    className="w-full pl-10 pr-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:border-[var(--color-kraft)] focus:ring-2 focus:ring-[var(--color-kraft-muted)] transition-all outline-none"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onBlur={handleConfirmBlur}
+                    className={`w-full pl-10 pr-4 py-3 bg-[#faf8f5] border ${confirmError ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:border-[var(--color-kraft)] focus:ring-[var(--color-kraft-muted)]'} rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:ring-2 transition-all outline-none`}
                     placeholder="••••••••"
                   />
                 </div>
+                {confirmError && (
+                  <p className="text-xs text-red-500">{confirmError}</p>
+                )}
               </div>
 
               <button

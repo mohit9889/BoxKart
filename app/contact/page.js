@@ -3,18 +3,59 @@
 import { motion } from 'motion/react';
 import Icon from '@/components/common/Icon';
 import { useState } from 'react';
+import { validateRequired, validateEmail } from '@/lib/validation';
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: 'General Inquiry',
+    message: '',
+  });
+
+  const [formErrors, setFormErrors] = useState({});
+
+  const handleBlur = (field) => {
+    let err = null;
+    if (field === 'firstName')
+      err = validateRequired(formData.firstName, 'First Name');
+    if (field === 'lastName')
+      err = validateRequired(formData.lastName, 'Last Name');
+    if (field === 'email') err = validateEmail(formData.email);
+    if (field === 'message')
+      err = validateRequired(formData.message, 'Message');
+
+    setFormErrors((prev) => ({ ...prev, [field]: err }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = {};
+    errors.firstName = validateRequired(formData.firstName, 'First Name');
+    errors.lastName = validateRequired(formData.lastName, 'Last Name');
+    errors.email = validateEmail(formData.email);
+    errors.message = validateRequired(formData.message, 'Message');
+
+    setFormErrors(errors);
+    if (Object.values(errors).some((err) => err !== null)) return;
+
     setIsSubmitting(true);
     // Mock network delay
     await new Promise((r) => setTimeout(r, 1500));
     setIsSubmitting(false);
     setIsSuccess(true);
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      subject: 'General Inquiry',
+      message: '',
+    });
   };
 
   return (
@@ -168,10 +209,19 @@ export default function ContactPage() {
                     <input
                       type="text"
                       id="firstName"
-                      required
-                      className="w-full px-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)] transition-colors"
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, firstName: e.target.value })
+                      }
+                      onBlur={() => handleBlur('firstName')}
+                      className={`w-full px-4 py-3 bg-[#faf8f5] border ${formErrors.firstName ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)]'} rounded-xl focus:outline-none focus:ring-2 transition-colors`}
                       placeholder="John"
                     />
+                    {formErrors.firstName && (
+                      <p className="text-xs text-red-500">
+                        {formErrors.firstName}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2 col-span-2 md:col-span-1">
                     <label
@@ -183,10 +233,19 @@ export default function ContactPage() {
                     <input
                       type="text"
                       id="lastName"
-                      required
-                      className="w-full px-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)] transition-colors"
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, lastName: e.target.value })
+                      }
+                      onBlur={() => handleBlur('lastName')}
+                      className={`w-full px-4 py-3 bg-[#faf8f5] border ${formErrors.lastName ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)]'} rounded-xl focus:outline-none focus:ring-2 transition-colors`}
                       placeholder="Doe"
                     />
+                    {formErrors.lastName && (
+                      <p className="text-xs text-red-500">
+                        {formErrors.lastName}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -200,10 +259,17 @@ export default function ContactPage() {
                   <input
                     type="email"
                     id="email"
-                    required
-                    className="w-full px-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)] transition-colors"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    onBlur={() => handleBlur('email')}
+                    className={`w-full px-4 py-3 bg-[#faf8f5] border ${formErrors.email ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)]'} rounded-xl focus:outline-none focus:ring-2 transition-colors`}
                     placeholder="john@company.com"
                   />
+                  {formErrors.email && (
+                    <p className="text-xs text-red-500">{formErrors.email}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -215,6 +281,10 @@ export default function ContactPage() {
                   </label>
                   <select
                     id="subject"
+                    value={formData.subject}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject: e.target.value })
+                    }
                     className="w-full px-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)] transition-colors appearance-none"
                   >
                     <option>General Inquiry</option>
@@ -233,11 +303,18 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     id="message"
-                    required
                     rows={5}
-                    className="w-full px-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)] transition-colors resize-none"
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
+                    onBlur={() => handleBlur('message')}
+                    className={`w-full px-4 py-3 bg-[#faf8f5] border ${formErrors.message ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:ring-[var(--color-charcoal)]/10 focus:border-[var(--color-charcoal)]'} rounded-xl focus:outline-none focus:ring-2 transition-colors resize-none`}
                     placeholder="How can we help you?"
                   ></textarea>
+                  {formErrors.message && (
+                    <p className="text-xs text-red-500">{formErrors.message}</p>
+                  )}
                 </div>
 
                 <button

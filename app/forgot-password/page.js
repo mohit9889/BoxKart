@@ -4,13 +4,25 @@ import { useState } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
+import { validateEmail } from '@/lib/validation';
 
 export default function ForgotPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(null);
+
+  const handleBlur = () => {
+    setEmailError(validateEmail(email));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const err = validateEmail(email);
+    setEmailError(err);
+    if (err) return;
+
     setIsSubmitting(true);
     // Mock network request
     await new Promise((r) => setTimeout(r, 1500));
@@ -91,11 +103,16 @@ export default function ForgotPasswordPage() {
                   <input
                     id="email"
                     type="email"
-                    required
-                    className="w-full pl-10 pr-4 py-3 bg-[#faf8f5] border border-[#e8e4de] rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:border-[var(--color-kraft)] focus:ring-2 focus:ring-[var(--color-kraft-muted)] transition-all outline-none"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={handleBlur}
+                    className={`w-full pl-10 pr-4 py-3 bg-[#faf8f5] border ${emailError ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-[#e8e4de] focus:border-[var(--color-kraft)] focus:ring-[var(--color-kraft-muted)]'} rounded-xl text-[0.9375rem] text-[var(--color-charcoal)] focus:bg-white focus:ring-2 transition-all outline-none`}
                     placeholder="you@company.com"
                   />
                 </div>
+                {emailError && (
+                  <p className="text-xs text-red-500">{emailError}</p>
+                )}
               </div>
 
               <button

@@ -126,6 +126,12 @@ const INITIAL_FORM = {
   notes: '',
 };
 
+import {
+  validateRequired,
+  validateEmail,
+  validatePhone,
+} from '@/lib/validation';
+
 /* ── Validation ── */
 
 function validateStep(step, data) {
@@ -157,18 +163,17 @@ function validateStep(step, data) {
   }
 
   if (step === 5) {
-    if (!data.contactName.trim()) errors.contactName = 'Name is required';
-    if (!data.businessName.trim())
-      errors.businessName = 'Business name is required';
-    if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      errors.email = 'Enter a valid email';
-    }
-    if (
-      !data.phone.trim() ||
-      !/^\+?\d{10,13}$/.test(data.phone.replace(/\s/g, ''))
-    ) {
-      errors.phone = 'Enter a valid phone number';
-    }
+    const nameErr = validateRequired(data.contactName, 'Name');
+    if (nameErr) errors.contactName = nameErr;
+
+    const bizErr = validateRequired(data.businessName, 'Business name');
+    if (bizErr) errors.businessName = bizErr;
+
+    const emailErr = validateEmail(data.email);
+    if (emailErr) errors.email = emailErr;
+
+    const phoneErr = validatePhone(data.phone.replace(/\s/g, ''));
+    if (phoneErr) errors.phone = phoneErr;
   }
 
   return errors;
