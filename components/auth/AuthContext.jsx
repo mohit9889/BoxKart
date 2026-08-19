@@ -86,6 +86,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (data) => {
+    const updatedUser = await authApi.updateProfile(data);
+    setUser(updatedUser.data || updatedUser);
+    return updatedUser;
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -93,6 +99,7 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

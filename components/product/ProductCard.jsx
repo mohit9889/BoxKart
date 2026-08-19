@@ -22,16 +22,25 @@ const ProductImage = ({ src, alt, className = '' }) => (
 );
 
 /* ── Badges ── */
-const Badges = ({ product, isBestValue, selectedQty }) => (
-  <div className="absolute top-3 left-3 flex gap-1.5">
-    {product.ply !== 'N/A' && (
-      <span className="badge badge-kraft">{product.ply}</span>
-    )}
-    {isBestValue && selectedQty !== product.pricingTiers?.[0]?.qty && (
-      <span className="badge badge-accent">Best Value</span>
-    )}
-  </div>
-);
+const Badges = ({ product, isBestValue, selectedQty }) => {
+  const formattedPly =
+    product.ply && product.ply !== 'N/A'
+      ? String(product.ply).includes('Ply')
+        ? product.ply
+        : `${product.ply}-Ply`
+      : null;
+
+  return (
+    <div className="absolute top-3 left-3 flex gap-1.5">
+      {formattedPly && (
+        <span className="badge badge-kraft">{formattedPly}</span>
+      )}
+      {isBestValue && selectedQty !== product.pricingTiers?.[0]?.qty && (
+        <span className="badge badge-accent">Best Value</span>
+      )}
+    </div>
+  );
+};
 
 /* ── Add to Cart button ── */
 const AddToCartButton = ({
@@ -240,7 +249,10 @@ export default function ProductCard({
             </h3>
           </Link>
           <p className="text-sm text-text-secondary mb-4">
-            {product.dimensions} · {product.material} · {product.ply}
+            {product.dimensions} · {product.material}
+            {product.ply &&
+              product.ply !== 'N/A' &&
+              ` · ${String(product.ply).includes('Ply') ? product.ply : `${product.ply}-Ply`}`}
           </p>
 
           {/* Full price table */}

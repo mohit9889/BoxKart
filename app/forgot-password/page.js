@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import { validateEmail } from '@/lib/validation';
+import { authApi } from '@/lib/api/auth';
 
 export default function ForgotPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,10 +25,15 @@ export default function ForgotPasswordPage() {
     if (err) return;
 
     setIsSubmitting(true);
-    // Mock network request
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
+
+    try {
+      await authApi.forgotPassword({ email });
+      setIsSuccess(true);
+    } catch (error) {
+      setEmailError(error.message || 'Failed to send reset link');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

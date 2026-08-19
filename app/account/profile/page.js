@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
@@ -11,9 +12,10 @@ import {
   validateGSTIN,
   validatePasswordStrong,
 } from '@/lib/validation';
+import { authApi } from '@/lib/api/auth';
 
 export default function ProfilePage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, updateProfile } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -84,8 +86,22 @@ export default function ProfilePage() {
     setIsSaving(true);
     setSaveSuccess(false);
 
-    // Mock save delay (simulate an API update)
-    await new Promise((r) => setTimeout(r, 1000));
+    try {
+      const parts = formData.fullName.trim().split(' ');
+      const firstName = parts[0];
+      const lastName = parts.length > 1 ? parts.slice(1).join(' ') : undefined;
+
+      await updateProfile({
+        firstName,
+        lastName,
+        phone: formData.phone,
+        company: formData.company,
+        gstin: formData.gstin,
+      });
+    } catch (error) {
+      console.error('Failed to update profile', error);
+      // Could show error here
+    }
 
     setIsSaving(false);
     setSaveSuccess(true);
@@ -105,8 +121,15 @@ export default function ProfilePage() {
     setPasswordErrors((prev) => ({ ...prev, [field]: err }));
   };
 
-  const handleUpdatePassword = (e) => {
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordGlobalError, setPasswordGlobalError] = useState(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
+  const handleUpdatePassword = async (e) => {
     e.preventDefault();
+    setPasswordGlobalError(null);
+    setPasswordSuccess(false);
+
     const errors = {};
     errors.currentPassword = validateRequired(
       passwordData.currentPassword,
@@ -117,9 +140,20 @@ export default function ProfilePage() {
     setPasswordErrors(errors);
     if (Object.values(errors).some((err) => err !== null)) return;
 
-    // API call placeholder
-    alert('Password updated successfully');
-    setPasswordData({ currentPassword: '', newPassword: '' });
+    setIsUpdatingPassword(true);
+    try {
+      await authApi.updatePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+      setPasswordSuccess(true);
+      setPasswordData({ currentPassword: '', newPassword: '' });
+      setTimeout(() => setPasswordSuccess(false), 3000);
+    } catch (error) {
+      setPasswordGlobalError(error.message || 'Failed to update password');
+    } finally {
+      setIsUpdatingPassword(false);
+    }
   };
 
   const getInitials = (name) => {
@@ -329,9 +363,12 @@ export default function ProfilePage() {
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between border-t border-[#e8e4de] gap-4">
             <p className="text-xs text-[var(--color-text-tertiary)] max-w-sm">
               Need to change your registered email address?{' '}
-              <a href="#" className="text-[var(--color-kraft)] hover:underline">
+              <Link
+                href="/contact"
+                className="text-[var(--color-kraft)] hover:underline"
+              >
                 Contact Support
-              </a>
+              </Link>
             </p>
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -437,14 +474,34 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+          {passwordGlobalError && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 flex items-start gap-3">
+              <Icon name="AlertCircle" size={18} className="shrink-0 mt-0.5" />
+              <p>{passwordGlobalError}</p>
+            </div>
+          )}
+          {passwordSuccess && (
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-600 flex items-start gap-3">
+              <Icon name="CheckCircle" size={18} className="shrink-0 mt-0.5" />
+              <p>Password updated successfully.</p>
+            </div>
+          )}
           <div className="pt-6 flex justify-end">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="btn-outline px-6 h-11"
+              disabled={isUpdatingPassword}
+              className="btn-outline px-6 h-11 flex items-center justify-center gap-2"
             >
-              Update Password
+              {isUpdatingPassword ? (
+                <>
+                  <Icon name="Loader2" size={18} className="animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update Password'
+              )}
             </motion.button>
           </div>
         </form>

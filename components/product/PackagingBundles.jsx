@@ -1,26 +1,23 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { bundles as staticBundles } from '@/data/bundles';
 import { useCart } from '@/lib/cart';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 
 /**
  * Packaging bundles section.
- * Accepts `bundles` from SSR (DB-driven). Falls back to static data if empty.
+ * Accepts `bundles` from SSR (DB-driven).
  * BE shape: { id, slug, name, tagline, description, items (JSON), price, originalPrice, savings, badge, popular }
- * Static shape uses `includes` instead of `items` — normalized below.
  */
 export default function PackagingBundles({ bundles: propBundles = [] }) {
-  // Use DB bundles if available, otherwise fall back to static
-  const rawBundles = propBundles.length > 0 ? propBundles : staticBundles;
-
-  // Normalize: BE uses `items`, static data uses `includes`
-  const bundles = rawBundles.map((b) => ({
+  // Normalize: BE uses `items` instead of `includes` from old static data
+  const bundles = propBundles.map((b) => ({
     ...b,
-    includes: b.items ?? b.includes ?? [],
+    includes: b.items ?? [],
   }));
+
+  if (bundles.length === 0) return null;
 
   return (
     <section id="bundles" className="section-padding">

@@ -4,10 +4,9 @@ import { useState, use, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getPriceForQuantity } from '@/data/products';
 import { catalogApi } from '@/lib/api/catalog';
 import { useCart } from '@/lib/cart';
-import { getUpsellPrompt } from '@/lib/pricing';
+import { getUpsellPrompt, getProductPrice } from '@/lib/pricing';
 import BoxBlueprint from '@/components/product/BoxBlueprint';
 import PincodeChecker from '@/components/product/PincodeChecker';
 import { ErrorState, Skeleton } from '@/components/ui';
@@ -82,7 +81,7 @@ export default function ProductDetailPage({ params }) {
     );
   }
 
-  const currentPrice = getPriceForQuantity(product, selectedQty);
+  const { unitPrice: currentPrice } = getProductPrice(product, selectedQty);
   const totalPrice = currentPrice * selectedQty;
 
   const handleAddToCart = () => {

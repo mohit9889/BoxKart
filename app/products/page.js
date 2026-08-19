@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { categories } from '@/data/categories';
 import { catalogApi } from '@/lib/api/catalog';
 import ProductCard from '@/components/product/ProductCard';
 import { EmptyState, Skeleton } from '@/components/ui';
 import Icon from '@/components/common/Icon';
 
-const PLY_OPTIONS = ['3-Ply', '5-Ply', 'N/A'];
+const PLY_OPTIONS = ['3-Ply', '5-Ply'];
 const SORT_OPTIONS = [
   { label: 'Popular', value: 'popular' },
   { label: 'Price: Low → High', value: 'price-asc' },
@@ -23,18 +22,34 @@ const SORT_OPTIONS = [
  * Product listing page with filters, sort, and search query support.
  */
 function ProductsPageContent() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('category') || '';
+
+  const selectedCategory = searchParams.get('category') || '';
   const searchQuery = searchParams.get('search') || '';
   const sizeFilter = searchParams.get('size') || '';
+  const selectedPly = searchParams.get('ply') || '';
+  const sortBy = searchParams.get('sort') || 'popular';
 
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedPly, setSelectedPly] = useState('');
-  const [sortBy, setSortBy] = useState('popular');
   const [filtersOpen, setFiltersOpen] = useState(false);
-
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await catalogApi.getCategories();
+        if (res?.data) {
+          setCategories(res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,7 +57,10 @@ function ProductsPageContent() {
       try {
         const params = {};
         if (selectedCategory) params.category = selectedCategory;
-        if (selectedPly) params.ply = selectedPly;
+        if (selectedPly) {
+          const match = selectedPly.match(/\d+/);
+          if (match) params.ply = parseInt(match[0], 10);
+        }
         if (searchQuery) params.q = searchQuery;
         if (sizeFilter) params.size = sizeFilter;
         if (sortBy) params.sort = sortBy;
@@ -59,10 +77,22 @@ function ProductsPageContent() {
     fetchProducts();
   }, [selectedCategory, selectedPly, sortBy, searchQuery, sizeFilter]);
 
+  const updateFilter = (key, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== 'popular') {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
   const clearFilters = () => {
-    setSelectedCategory('');
-    setSelectedPly('');
-    setSortBy('popular');
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('category');
+    params.delete('ply');
+    params.delete('sort');
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const activeFilterCount = (selectedCategory ? 1 : 0) + (selectedPly ? 1 : 0);
@@ -93,7 +123,7 @@ function ProductsPageContent() {
               <h3 className="text-overline mb-3">Category</h3>
               <div className="space-y-1.5">
                 <button
-                  onClick={() => setSelectedCategory('')}
+                  onClick={() => updateFilter('category', '')}
                   className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     !selectedCategory
                       ? 'bg-charcoal text-white font-medium'
@@ -105,7 +135,7 @@ function ProductsPageContent() {
                 {categories.map((cat) => (
                   <button
                     key={cat.slug}
-                    onClick={() => setSelectedCategory(cat.slug)}
+                    onClick={() => updateFilter('category', cat.slug)}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                       selectedCategory === cat.slug
                         ? 'bg-charcoal text-white font-medium'
@@ -122,7 +152,7 @@ function ProductsPageContent() {
               <h3 className="text-overline mb-3">Ply</h3>
               <div className="space-y-1.5">
                 <button
-                  onClick={() => setSelectedPly('')}
+                  onClick={() => updateFilter('ply', '')}
                   className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     !selectedPly
                       ? 'bg-charcoal text-white font-medium'
@@ -134,7 +164,7 @@ function ProductsPageContent() {
                 {PLY_OPTIONS.map((ply) => (
                   <button
                     key={ply}
-                    onClick={() => setSelectedPly(ply)}
+                    onClick={() => updateFilter('ply', ply)}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                       selectedPly === ply
                         ? 'bg-charcoal text-white font-medium'
@@ -179,7 +209,7 @@ function ProductsPageContent() {
             <div className="relative">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => updateFilter('sort', e.target.value)}
                 className="input-bk text-sm pr-8 py-2 appearance-none cursor-pointer"
               >
                 {SORT_OPTIONS.map((opt) => (
@@ -258,7 +288,7 @@ function ProductsPageContent() {
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     <button
-                      onClick={() => setSelectedCategory('')}
+                      onClick={() => updateFilter('category', '')}
                       className={`px-3 py-1.5 rounded-full text-sm ${
                         !selectedCategory
                           ? 'bg-charcoal text-white'
@@ -270,7 +300,7 @@ function ProductsPageContent() {
                     {categories.map((cat) => (
                       <button
                         key={cat.slug}
-                        onClick={() => setSelectedCategory(cat.slug)}
+                        onClick={() => updateFilter('category', cat.slug)}
                         className={`px-3 py-1.5 rounded-full text-sm ${
                           selectedCategory === cat.slug
                             ? 'bg-charcoal text-white'
@@ -289,7 +319,7 @@ function ProductsPageContent() {
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     <button
-                      onClick={() => setSelectedPly('')}
+                      onClick={() => updateFilter('ply', '')}
                       className={`px-3 py-1.5 rounded-full text-sm ${
                         !selectedPly
                           ? 'bg-charcoal text-white'
@@ -301,7 +331,7 @@ function ProductsPageContent() {
                     {PLY_OPTIONS.map((ply) => (
                       <button
                         key={ply}
-                        onClick={() => setSelectedPly(ply)}
+                        onClick={() => updateFilter('ply', ply)}
                         className={`px-3 py-1.5 rounded-full text-sm ${
                           selectedPly === ply
                             ? 'bg-charcoal text-white'

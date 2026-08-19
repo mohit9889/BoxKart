@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import Icon from '@/components/common/Icon';
 import { useState } from 'react';
 import { validateRequired, validateEmail } from '@/lib/validation';
+import { contactApi } from '@/lib/api/contact';
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,17 +46,28 @@ export default function ContactPage() {
     if (Object.values(errors).some((err) => err !== null)) return;
 
     setIsSubmitting(true);
-    // Mock network delay
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      subject: 'General Inquiry',
-      message: '',
-    });
+
+    try {
+      await contactApi.submitContactForm({
+        fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        inquiryType: formData.subject,
+        message: formData.message,
+      });
+      setIsSuccess(true);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        subject: 'General Inquiry',
+        message: '',
+      });
+    } catch (err) {
+      console.error('Failed to submit contact form:', err);
+      // We could set a global error state here if needed
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

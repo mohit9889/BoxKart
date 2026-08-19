@@ -116,6 +116,7 @@ const ICON_MAP = {
   LogOut: Logout01Icon,
   Mail: Mail01Icon,
   MapPin: MapPinIcon,
+  LocateFixed: MapPinIcon,
   Menu: Menu01Icon,
   MessageSquare: Message01Icon,
   Minus: MinusSignIcon,
