@@ -4,8 +4,13 @@ export const metadata = {
     'Create a BoxKart account to unlock bulk discounts, easy reordering, and custom packaging solutions.',
 };
 
+import { Suspense } from 'react';
 import AuthLayout from '@/components/auth/AuthLayout';
 
 export default function SignupPage() {
-  return <AuthLayout mode="signup" />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthLayout mode="signup" />
+    </Suspense>
+  );
 }

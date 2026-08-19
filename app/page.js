@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Hero from '@/components/home/Hero';
 import TrustIndicators from '@/components/home/TrustIndicators';
 import BoxFinder from '@/components/product/BoxFinder';
@@ -43,7 +44,9 @@ export default async function HomePage() {
     <>
       <Hero />
       <TrustIndicators />
-      <BoxFinder />
+      <Suspense fallback={<div>Loading Box Finder...</div>}>
+        <BoxFinder />
+      </Suspense>
       <CategorySection categories={categories} />
       <ShopBySize />
       <PopularBoxes products={popularProducts} />
