@@ -1,8 +1,11 @@
-'use client';
-
-import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
+
+export const metadata = {
+  title: 'About Us | BoxKart',
+  description:
+    'Packaging that powers your business. Streamlining the B2B packaging supply chain.',
+};
 
 export default function AboutPage() {
   return (
@@ -14,11 +17,7 @@ export default function AboutPage() {
         </div>
 
         <div className="container-bk relative z-10 text-center max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <span className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wider text-[var(--color-kraft-light)] bg-white border border-[#e8e4de] rounded-full uppercase">
               Our Story
             </span>
@@ -30,7 +29,7 @@ export default function AboutPage() {
               have to struggle to find high-quality, reliable, and affordable
               packaging. We are streamlining the B2B packaging supply chain.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -55,12 +54,8 @@ export default function AboutPage() {
                 desc: 'Our corrugated boxes are made from highly recyclable materials, helping you minimize your carbon footprint.',
               },
             ].map((value, i) => (
-              <motion.div
+              <div
                 key={value.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="p-8 rounded-3xl bg-[#faf8f5] border border-[#e8e4de]"
               >
                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm">
@@ -76,7 +71,7 @@ export default function AboutPage() {
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">
                   {value.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

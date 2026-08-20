@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthContext';
 import {
   validateEmail,
@@ -18,6 +18,7 @@ export default function AuthForm({ initialMode = 'login' }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, signup } = useAuth();
 
   const toggleMode = () => {
@@ -68,7 +69,8 @@ export default function AuthForm({ initialMode = 'login' }) {
         await signup({ firstName, lastName, email, password });
       }
 
-      router.push('/account');
+      const redirectUrl = searchParams.get('redirect') || '/account';
+      router.push(redirectUrl);
     } catch (error) {
       console.error('Authentication failed:', error);
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { adminQuoteService } from '@/services/admin/quote.service';
+import { adminApi } from '@/lib/api/admin';
 import Icon from '@/components/common/Icon';
 import Link from 'next/link';
 
@@ -12,8 +12,27 @@ export default function AdminQuotesPage() {
   useEffect(() => {
     async function loadQuotes() {
       try {
-        const data = await adminQuoteService.getQuotes();
-        setQuotes(data);
+        const data = await adminApi.getQuotes();
+        const formattedQuotes = data.map((quote) => ({
+          id: quote.quoteNumber || quote.id,
+          rfqId: quote.rfq?.rfqNumber || quote.rfqId,
+          customer: quote.rfq?.user
+            ? `${quote.rfq.user.firstName || ''} ${quote.rfq.user.lastName || ''}`.trim()
+            : 'Guest',
+          amount: new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 0,
+          }).format(quote.totalAmount || 0),
+          date: new Date(quote.createdAt).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          }),
+          status: quote.status || 'PENDING',
+          rawId: quote.id,
+        }));
+        setQuotes(formattedQuotes);
       } catch (error) {
         console.error('Failed to load quotes', error);
       } finally {
@@ -101,7 +120,7 @@ export default function AdminQuotesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link
-                        href={`/admin/quotes/${quote.id}`}
+                        href={`/admin/quotes/${quote.rawId}`}
                         className="text-blue-600 hover:text-blue-800 font-medium"
                       >
                         View

@@ -1,15 +1,12 @@
-'use client';
-
-import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
 import CustomPackagingWizard from '@/components/custom-packaging/CustomPackagingWizard';
-import {
-  fadeUp,
-  staggerContainer,
-  staggerChild,
-  inViewConfig,
-} from '@/lib/motion';
+
+export const metadata = {
+  title: 'Custom Packaging | BoxKart',
+  description:
+    'Custom-sized, custom-printed packaging designed around your product. Get a quote within 24-48 hours.',
+};
 
 const FEATURES = [
   {
@@ -44,9 +41,6 @@ const FEATURES = [
   },
 ];
 
-/**
- * Custom Packaging page — dedicated route for the wizard flow.
- */
 export default function CustomPackagingPage() {
   return (
     <>
@@ -71,11 +65,7 @@ export default function CustomPackagingPage() {
             </ol>
           </nav>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl"
-          >
+          <div className="max-w-2xl">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
               Packaging Made for Your Brand
             </h1>
@@ -83,19 +73,13 @@ export default function CustomPackagingPage() {
               Custom-sized, custom-printed packaging — designed around your
               product. Tell us what you need and get a quote within 24–48 hours.
             </p>
-          </motion.div>
+          </div>
 
           {/* Feature Grid */}
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-2 lg:grid-cols-3 gap-3 mt-8"
-          >
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mt-8">
             {FEATURES.map((f) => (
-              <motion.div
+              <div
                 key={f.title}
-                variants={staggerChild}
                 className="bg-white/5 rounded-xl p-3 border border-white/10"
               >
                 <Icon
@@ -109,9 +93,9 @@ export default function CustomPackagingPage() {
                 <p className="text-xs text-white/50 leading-relaxed">
                   {f.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -125,26 +109,14 @@ export default function CustomPackagingPage() {
       {/* ── How Custom Packaging Works ── */}
       <section className="bg-warm-gray">
         <div className="container-bk section-padding">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={inViewConfig}
-            className="text-center mb-10"
-          >
+          <div className="text-center mb-10">
             <h2 className="heading-2 mb-3">How It Works</h2>
             <p className="text-body max-w-lg mx-auto">
               From your dimensions to your doorstep — simple and transparent.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={inViewConfig}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto"
-          >
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {[
               {
                 step: '01',
@@ -171,11 +143,7 @@ export default function CustomPackagingPage() {
                 icon: 'Truck',
               },
             ].map((item) => (
-              <motion.div
-                key={item.step}
-                variants={staggerChild}
-                className="text-center"
-              >
+              <div key={item.step} className="text-center">
                 <div className="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-4">
                   <Icon name={item.icon} size={24} className="text-kraft" />
                 </div>
@@ -188,28 +156,23 @@ export default function CustomPackagingPage() {
                 <p className="text-xs text-text-secondary leading-relaxed">
                   {item.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ── CTA ── */}
       <section className="section-padding">
-        <div className="container-bk text-center max-w-xl">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={inViewConfig}
-          >
+        <div className="container-bk text-center max-w-xl mx-auto">
+          <div>
             <h2 className="heading-3 mb-3">Not Sure Where to Start?</h2>
             <p className="text-body mb-6">
               Our packaging experts can recommend the right material, size, and
               printing for your product.
             </p>
             <div className="flex justify-center gap-3 flex-wrap">
-              <Link href="/" className="btn-primary">
+              <Link href="/contact" className="btn-primary">
                 <Icon name="Phone" size={16} className="mr-1" />
                 Talk to Expert
               </Link>
@@ -217,7 +180,7 @@ export default function CustomPackagingPage() {
                 Browse Ready-Made Boxes
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </>

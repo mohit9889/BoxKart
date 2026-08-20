@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { adminProductService } from '@/services/admin/product.service';
+import { adminApi } from '@/lib/api/admin';
 import Icon from '@/components/common/Icon';
 import Link from 'next/link';
 
@@ -12,8 +12,19 @@ export default function AdminProductsPage() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const data = await adminProductService.getProducts();
-        setProducts(data);
+        const data = await adminApi.getProducts();
+        const formattedProducts = data.map((product) => ({
+          id: product.id,
+          name: product.name,
+          sku: product.sku || 'N/A',
+          category: product.category?.name || 'Uncategorized',
+          price: product.priceTiers?.[0]?.price
+            ? `₹${product.priceTiers[0].price}`
+            : 'N/A',
+          moq: product.priceTiers?.[0]?.minimumQuantity || 0,
+          status: product.status || 'ACTIVE',
+        }));
+        setProducts(formattedProducts);
       } catch (error) {
         console.error('Failed to load products', error);
       } finally {

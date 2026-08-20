@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { adminOrderService } from '@/services/admin/order.service';
+import { adminApi } from '@/lib/api/admin';
 import Icon from '@/components/common/Icon';
 import Link from 'next/link';
 
@@ -12,8 +12,28 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     async function loadOrders() {
       try {
-        const data = await adminOrderService.getOrders();
-        setOrders(data);
+        const data = await adminApi.getOrders();
+        const formattedOrders = data.map((order) => ({
+          id: order.orderNumber || order.id,
+          date: new Date(order.createdAt).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          }),
+          customer: order.user
+            ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim()
+            : 'Guest',
+          items: order.orderItems?.length || 1, // backend might not return items array directly in list view
+          amount: new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 0,
+          }).format(order.totalAmount),
+          payment: order.paymentStatus || 'PENDING',
+          status: order.status || 'PROCESSING',
+          rawId: order.id,
+        }));
+        setOrders(formattedOrders);
       } catch (error) {
         console.error('Failed to load orders', error);
       } finally {
@@ -115,7 +135,7 @@ export default function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link
-                        href={`/admin/orders/${order.id}`}
+                        href={`/admin/orders/${order.rawId}`}
                         className="text-blue-600 hover:text-blue-800 font-medium"
                       >
                         Manage

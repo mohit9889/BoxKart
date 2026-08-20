@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, startTransition } from 'react';
-import { adminInquiryService } from '@/services/admin/inquiry.service';
+import { adminApi } from '@/lib/api/admin';
 import Icon from '@/components/common/Icon';
 import Link from 'next/link';
 
@@ -24,8 +24,8 @@ export default function AdminInquiriesPage() {
   useEffect(() => {
     let cancelled = false;
     startTransition(() => setIsLoading(true));
-    adminInquiryService
-      .getInquiries({
+    adminApi
+      .getGuestInquiries({
         page,
         limit: 20,
         status: statusFilter !== 'ALL' ? statusFilter : undefined,

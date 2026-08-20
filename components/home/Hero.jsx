@@ -151,6 +151,7 @@ export default function Hero() {
                 transition={{ delay: 0.4, duration: duration.slow }}
                 className="absolute bottom-14 left-10 w-48 h-40"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/box-large.svg"
                   alt="Large Box"
@@ -173,6 +174,7 @@ export default function Hero() {
                 transition={{ delay: 0.5, duration: duration.slow }}
                 className="absolute bottom-26 right-14 w-36 h-32"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/box-medium.svg"
                   alt="Medium Box"
@@ -195,6 +197,7 @@ export default function Hero() {
                 transition={{ delay: 0.6, duration: duration.slow }}
                 className="absolute top-18 right-22 w-28 h-24"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/box-small.svg"
                   alt="Small Box"
@@ -217,6 +220,7 @@ export default function Hero() {
                 transition={{ delay: 0.7, duration: duration.slow }}
                 className="absolute top-30 left-6 w-28 h-28"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/courier-bag-m.svg"
                   alt="Courier Bag"
@@ -231,6 +235,7 @@ export default function Hero() {
                 transition={{ delay: 0.8, duration: duration.normal }}
                 className="absolute bottom-6 right-6 w-24 h-24"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/bopp-tape.svg"
                   alt="Packing Tape"
@@ -245,6 +250,7 @@ export default function Hero() {
                 transition={{ delay: 0.9, duration: duration.normal }}
                 className="absolute top-6 left-22 w-28 h-28"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/bubble-wrap.svg"
                   alt="Bubble Wrap"

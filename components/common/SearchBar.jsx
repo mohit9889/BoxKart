@@ -250,6 +250,7 @@ export default function SearchBar({ open, onClose }) {
                           }`}
                         >
                           <div className="w-14 h-14 bg-white rounded-xl shadow-sm border border-border/50 shrink-0 flex items-center justify-center p-2 group-hover:scale-105 transition-transform">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={product.image}
                               alt={product.name}

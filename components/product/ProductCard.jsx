@@ -13,6 +13,7 @@ const ProductImage = ({ src, alt, className = '' }) => (
     whileHover={{ scale: 1.05 }}
     className={`relative flex items-center justify-center ${className}`}
   >
+    {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src={src}
       alt={alt}

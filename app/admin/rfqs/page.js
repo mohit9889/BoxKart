@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { adminRFQService } from '@/services/admin/rfq.service';
+import { adminApi } from '@/lib/api/admin';
 import Icon from '@/components/common/Icon';
 import Link from 'next/link';
 
@@ -12,8 +12,23 @@ export default function AdminRFQsPage() {
   useEffect(() => {
     async function loadRFQs() {
       try {
-        const data = await adminRFQService.getRFQs();
-        setRfqs(data);
+        const data = await adminApi.getRfqs();
+        const formattedRfqs = data.map((rfq) => ({
+          id: rfq.rfqNumber || rfq.id,
+          customer: rfq.user
+            ? `${rfq.user.firstName || ''} ${rfq.user.lastName || ''}`.trim()
+            : 'Guest',
+          product: rfq.packagingType || 'Custom Box',
+          quantity: rfq.requiredQuantity || 0,
+          date: new Date(rfq.createdAt).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          }),
+          status: rfq.status || 'NEW',
+          rawId: rfq.id,
+        }));
+        setRfqs(formattedRfqs);
       } catch (error) {
         console.error('Failed to load RFQs', error);
       } finally {
@@ -104,7 +119,7 @@ export default function AdminRFQsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link
-                        href={`/admin/rfqs/${rfq.id}`}
+                        href={`/admin/rfqs/${rfq.rawId}`}
                         className="text-blue-600 hover:text-blue-800 font-medium"
                       >
                         Review

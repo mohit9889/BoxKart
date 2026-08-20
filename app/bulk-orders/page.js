@@ -1,17 +1,12 @@
-'use client';
-
-import { useState } from 'react';
-import { motion } from 'motion/react';
 import Link from 'next/link';
 import Icon from '@/components/common/Icon';
-import BulkOrderForm from '@/components/bulk-orders/RFQ/BulkOrderForm';
-import BulkUploadForm from '@/components/bulk-orders/BulkUpload/BulkUploadForm';
-import {
-  fadeUp,
-  staggerContainer,
-  staggerChild,
-  inViewConfig,
-} from '@/lib/motion';
+import BulkOrdersTabs from '@/components/bulk-orders/BulkOrdersTabs';
+
+export const metadata = {
+  title: 'Bulk Orders & Wholesale Packaging | BoxKart',
+  description:
+    'Get volume pricing on custom and standard packaging. Streamlined RFQ and bulk upload process for B2B buyers.',
+};
 
 const VALUE_PROPS = [
   {
@@ -36,19 +31,7 @@ const VALUE_PROPS = [
   },
 ];
 
-const TABS = [
-  { id: 'rfq', label: 'Request Quote', icon: 'FileText' },
-  { id: 'upload', label: 'Bulk Upload', icon: 'Package' },
-];
-
-/**
- * Bulk Orders page — B2B RFQ flow with two tabs:
- * 1. Request Quote (multi-step form)
- * 2. Bulk Upload (CSV/Excel upload)
- */
 export default function BulkOrdersPage() {
-  const [activeTab, setActiveTab] = useState('rfq');
-
   return (
     <>
       {/* ── Hero ── */}
@@ -72,11 +55,7 @@ export default function BulkOrdersPage() {
             </ol>
           </nav>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl"
-          >
+          <div className="max-w-2xl">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
               Bulk Packaging for Your Business
             </h1>
@@ -85,19 +64,13 @@ export default function BulkOrdersPage() {
               requirements and our team will prepare a detailed quote within 24
               hours.
             </p>
-          </motion.div>
+          </div>
 
           {/* Value Props */}
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-8"
-          >
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-8">
             {VALUE_PROPS.map((vp) => (
-              <motion.div
+              <div
                 key={vp.title}
-                variants={staggerChild}
                 className="bg-white/5 rounded-xl p-4 border border-white/10"
               >
                 <Icon
@@ -111,85 +84,27 @@ export default function BulkOrdersPage() {
                 <p className="text-xs text-white/50 leading-relaxed">
                   {vp.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ── Tabs + Form ── */}
-      <section className="section-padding">
-        <div className="container-bk max-w-3xl">
-          {/* Tab Switcher */}
-          <div
-            className="flex items-center gap-1 bg-warm-gray rounded-xl p-1 mb-8"
-            role="tablist"
-            aria-label="Bulk order method"
-          >
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                aria-controls={`panel-${tab.id}`}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white text-charcoal shadow-sm'
-                    : 'text-text-secondary hover:text-charcoal'
-                }`}
-              >
-                <Icon name={tab.icon} size={16} />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Panels */}
-          <div
-            id="panel-rfq"
-            role="tabpanel"
-            aria-labelledby="tab-rfq"
-            hidden={activeTab !== 'rfq'}
-          >
-            {activeTab === 'rfq' && <BulkOrderForm />}
-          </div>
-
-          <div
-            id="panel-upload"
-            role="tabpanel"
-            aria-labelledby="tab-upload"
-            hidden={activeTab !== 'upload'}
-          >
-            {activeTab === 'upload' && <BulkUploadForm />}
-          </div>
-        </div>
-      </section>
+      <BulkOrdersTabs />
 
       {/* ── How It Works ── */}
       <section className="bg-warm-gray">
         <div className="container-bk section-padding">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={inViewConfig}
-            className="text-center mb-10"
-          >
+          <div className="text-center mb-10">
             <h2 className="heading-2 mb-3">How Bulk Orders Work</h2>
             <p className="text-body max-w-lg mx-auto">
               From request to delivery — a streamlined process designed for
               business buyers.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={inViewConfig}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto"
-          >
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {[
               {
                 step: '01',
@@ -216,11 +131,7 @@ export default function BulkOrdersPage() {
                 icon: 'Truck',
               },
             ].map((item) => (
-              <motion.div
-                key={item.step}
-                variants={staggerChild}
-                className="text-center"
-              >
+              <div key={item.step} className="text-center">
                 <div className="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-4">
                   <Icon name={item.icon} size={24} className="text-kraft" />
                 </div>
@@ -233,28 +144,23 @@ export default function BulkOrdersPage() {
                 <p className="text-xs text-text-secondary leading-relaxed">
                   {item.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ── Contact CTA ── */}
       <section className="section-padding">
-        <div className="container-bk text-center max-w-xl">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={inViewConfig}
-          >
+        <div className="container-bk text-center max-w-xl mx-auto">
+          <div>
             <h2 className="heading-3 mb-3">Need Help with Your Order?</h2>
             <p className="text-body mb-6">
               Our packaging experts are ready to help you find the right
               solution for your business.
             </p>
             <div className="flex justify-center gap-3 flex-wrap">
-              <Link href="/" className="btn-primary">
+              <Link href="/contact" className="btn-primary">
                 <Icon name="Phone" size={16} className="mr-1" />
                 Talk to Expert
               </Link>
@@ -262,7 +168,7 @@ export default function BulkOrdersPage() {
                 Browse Products
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </>
